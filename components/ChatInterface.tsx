@@ -211,21 +211,20 @@ export const ChatInterface: React.FC = () => {
           </div>
         )}
 
-        {messages.map((msg) => (
+        {messages.map((msg, index) => (
           <MessageBubble 
             key={msg.id} 
             message={msg} 
+            isLast={index === messages.length - 1}
+            isGenerating={isLoading}
             onDelete={handleDelete}
             onRegenerate={handleRegenerate}
           />
         ))}
 
         {isLoading && (
-          <div className="flex items-center gap-3 animate-pulse text-gray-500 text-sm ml-2">
-            <div className="h-2 w-2 rounded-full bg-blue-500"></div>
-            <div className="h-2 w-2 rounded-full bg-blue-500 delay-75"></div>
-            <div className="h-2 w-2 rounded-full bg-blue-500 delay-150"></div>
-            <span className="ml-2 font-medium">Gemini is thinking...</span>
+          <div className="flex w-full items-center justify-center py-4">
+            <span className="animate-pulse font-medium text-gray-500 text-sm">Gemini is thinking...</span>
           </div>
         )}
       </div>

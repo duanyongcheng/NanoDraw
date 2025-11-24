@@ -6,6 +6,8 @@ import { User, Sparkles, ChevronDown, ChevronRight, BrainCircuit, Trash2, Rotate
 
 interface Props {
   message: ChatMessage;
+  isLast: boolean;
+  isGenerating: boolean;
   onDelete: (id: string) => void;
   onRegenerate: (id: string) => void;
 }
@@ -83,9 +85,16 @@ const ThinkingBlock: React.FC<{ parts: Part[] }> = ({ parts }) => {
   );
 };
 
-export const MessageBubble: React.FC<Props> = ({ message, onDelete, onRegenerate }) => {
+export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, onDelete, onRegenerate }) => {
   const isUser = message.role === 'user';
   const [showActions, setShowActions] = useState(false);
+  const actionsDisabled = isLast && isGenerating && !isUser; // Disable actions only for the model message currently being generated
+
+  const handleDelete = () => {
+    if (window.confirm("Are you sure you want to delete this message?")) {
+      onDelete(message.id);
+    }
+  };
 
   // Group parts: consecutive thinking parts should be grouped together
   const groupedParts: (Part | Part[])[] = [];
@@ -224,22 +233,24 @@ export const MessageBubble: React.FC<Props> = ({ message, onDelete, onRegenerate
            </span>
            
            {/* Actions */}
-           <div className={`flex items-center gap-1 transition-opacity duration-200 ${showActions ? 'opacity-100' : 'opacity-0'}`}>
-              <button 
-                onClick={() => onRegenerate(message.id)}
-                className="p-1 rounded hover:bg-gray-800 text-gray-400 hover:text-blue-400"
-                title="Regenerate from here"
-              >
-                <RotateCcw className="h-3 w-3" />
-              </button>
-              <button 
-                onClick={() => onDelete(message.id)}
-                className="p-1 rounded hover:bg-gray-800 text-gray-400 hover:text-red-400"
-                title="Delete message"
-              >
-                <Trash2 className="h-3 w-3" />
-              </button>
-           </div>
+           {!actionsDisabled && (
+             <div className={`flex items-center gap-1 transition-opacity duration-200 ${showActions ? 'opacity-100' : 'opacity-0'}`}>
+                <button 
+                  onClick={() => onRegenerate(message.id)}
+                  className="p-1 rounded hover:bg-gray-800 text-gray-400 hover:text-blue-400"
+                  title="Regenerate from here"
+                >
+                  <RotateCcw className="h-3 w-3" />
+                </button>
+                <button 
+                  onClick={handleDelete}
+                  className="p-1 rounded hover:bg-gray-800 text-gray-400 hover:text-red-400"
+                  title="Delete message"
+                >
+                  <Trash2 className="h-3 w-3" />
+                </button>
+             </div>
+           )}
         </div>
       </div>
 
