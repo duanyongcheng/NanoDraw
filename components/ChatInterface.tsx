@@ -2,7 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
-import { generateContent } from '../services/geminiService';
+import { streamGeminiResponse } from '../services/geminiService';
 import { ChatMessage, Attachment, Part } from '../types';
 import { Sparkles } from 'lucide-react';
 
@@ -13,6 +13,7 @@ export const ChatInterface: React.FC = () => {
     history, 
     settings, 
     addMessage, 
+    updateLastMessage,
     isLoading, 
     setLoading 
   } = useAppStore();
@@ -66,7 +67,20 @@ export const ChatInterface: React.FC = () => {
         parts: userParts
     };
     
+    // Add User Message
     addMessage(userMessage, userContent);
+
+    // Prepare Model Placeholder
+    const modelMessageId = (Date.now() + 1).toString();
+    const modelMessage: ChatMessage = {
+      id: modelMessageId,
+      role: 'model',
+      parts: [], // Start empty
+      timestamp: Date.now()
+    };
+    
+    // Add Placeholder Model Message to Store
+    addMessage(modelMessage, { role: 'model', parts: [] });
 
     try {
       // Prepare images for service
@@ -75,23 +89,17 @@ export const ChatInterface: React.FC = () => {
           mimeType: a.mimeType
       }));
 
-      const { userContent: confirmedUserContent, modelContent } = await generateContent(
+      const stream = streamGeminiResponse(
         apiKey,
-        history, // Pass existing history
+        history, // Pass existing history (before user message is added in this scope's variable, which is correct)
         text,
         imagesPayload,
         settings
       );
 
-      // Add Model Response
-      const modelMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'model',
-        parts: modelContent.parts || [],
-        timestamp: Date.now()
-      };
-
-      addMessage(modelMessage, modelContent);
+      for await (const chunk of stream) {
+          updateLastMessage(chunk.modelParts);
+      }
 
     } catch (error) {
       console.error("Failed to generate", error);

@@ -10,6 +10,7 @@ export interface Part {
     mimeType: string;
     data: string;
   };
+  thought?: boolean;
 }
 
 export interface Content {

@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AppSettings, ChatMessage, Content } from '../types';
+import { AppSettings, ChatMessage, Content, Part } from '../types';
 
 interface AppState {
   apiKey: string | null;
@@ -13,6 +13,7 @@ interface AppState {
   setApiKey: (key: string) => void;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
   addMessage: (message: ChatMessage, content: Content) => void;
+  updateLastMessage: (parts: Part[]) => void;
   setLoading: (loading: boolean) => void;
   toggleSettings: () => void;
   clearHistory: () => void;
@@ -43,6 +44,28 @@ export const useAppStore = create<AppState>()(
           messages: [...state.messages, message],
           history: [...state.history, content]
         })),
+
+      updateLastMessage: (parts) => 
+        set((state) => {
+            const messages = [...state.messages];
+            const history = [...state.history];
+            
+            if (messages.length > 0) {
+                messages[messages.length - 1] = {
+                    ...messages[messages.length - 1],
+                    parts: [...parts] // Create a copy to trigger re-renders
+                };
+            }
+            
+            if (history.length > 0) {
+                history[history.length - 1] = {
+                    ...history[history.length - 1],
+                    parts: [...parts]
+                };
+            }
+            
+            return { messages, history };
+        }),
 
       setLoading: (loading) => set({ isLoading: loading }),
       
