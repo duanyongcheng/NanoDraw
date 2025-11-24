@@ -137,33 +137,3 @@ export const streamGeminiResponse = async function* (
     throw error;
   }
 };
-
-// Keep the original function for backward compatibility if needed, 
-// or for cases where we don't want streaming (though we plan to switch).
-// We can implement it using the stream function to reduce code duplication.
-export const generateContent = async (
-  apiKey: string,
-  history: Content[],
-  prompt: string,
-  images: { base64Data: string; mimeType: string }[],
-  settings: AppSettings
-) => {
-  const stream = streamGeminiResponse(apiKey, history, prompt, images, settings);
-  let finalResult = null;
-  
-  for await (const result of stream) {
-    finalResult = result;
-  }
-  
-  if (!finalResult) {
-    throw new Error("No content generated.");
-  }
-
-  return {
-    userContent: finalResult.userContent,
-    modelContent: {
-      role: "model" as const,
-      parts: finalResult.modelParts
-    }
-  };
-};
