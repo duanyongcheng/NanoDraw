@@ -25,6 +25,8 @@ export const useAppStore = create<AppState>((set) => ({
     resolution: '1K',
     aspectRatio: '1:1',
     useGrounding: false,
+    customEndpoint: '',
+    modelName: 'gemini-3-pro-image-preview',
   },
   history: [],
   messages: [],

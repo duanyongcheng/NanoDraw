@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import { Key, ExternalLink } from 'lucide-react';
+import { Key, ExternalLink, ChevronDown, ChevronRight, Settings2 } from 'lucide-react';
 
 export const ApiKeyModal: React.FC = () => {
-  const { setApiKey } = useAppStore();
+  const { setApiKey, updateSettings, settings } = useAppStore();
   const [inputKey, setInputKey] = useState('');
-  const [error, setError] = useState('');
+  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [endpoint, setEndpoint] = useState(settings.customEndpoint || '');
+  const [model, setModel] = useState(settings.modelName || 'gemini-3-pro-image-preview');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (inputKey.length < 10) {
-      setError('Invalid API Key format.');
-      return;
-    }
+    if (!inputKey.trim()) return;
+    
+    updateSettings({
+      customEndpoint: endpoint,
+      modelName: model
+    });
     setApiKey(inputKey);
   };
 
@@ -37,20 +41,62 @@ export const ApiKeyModal: React.FC = () => {
               type="password"
               id="apiKey"
               value={inputKey}
-              onChange={(e) => {
-                setInputKey(e.target.value);
-                setError('');
-              }}
+              onChange={(e) => setInputKey(e.target.value)}
               className="w-full rounded-lg bg-gray-950 border border-gray-800 px-4 py-3 text-white placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition"
               placeholder="AIzaSy..."
               autoFocus
             />
-            {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+          </div>
+
+          {/* Advanced Settings */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setShowAdvanced(!showAdvanced)}
+              className="group flex items-center gap-2 text-sm text-gray-500 transition-all"
+            >
+              <div className="flex items-center gap-2 group-hover:text-blue-400 group-hover:underline">
+                <Settings2 className="h-3 w-3" />
+                <span>Advanced Configuration</span>
+                {showAdvanced ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
+              </div>
+            </button>
+
+            <div 
+              className={`grid transition-all duration-300 ease-in-out ${
+                showAdvanced ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
+              }`}
+            >
+              <div className="overflow-hidden">
+                <div className="mt-2 rounded-lg bg-gray-950 border border-gray-800 p-4 space-y-4">
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Custom Endpoint (Optional)</label>
+                    <input
+                      type="text"
+                      value={endpoint}
+                      onChange={(e) => setEndpoint(e.target.value)}
+                      className="w-full rounded-md bg-gray-900 border border-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                      placeholder="https://generativelanguage.googleapis.com"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">Model Name</label>
+                    <input
+                      type="text"
+                      value={model}
+                      onChange={(e) => setModel(e.target.value)}
+                      className="w-full rounded-md bg-gray-900 border border-gray-800 px-3 py-2 text-sm text-white placeholder-gray-600 focus:border-blue-500 focus:outline-none"
+                      placeholder="gemini-3-pro-image-preview"
+                    />
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
 
           <button
             type="submit"
-            disabled={!inputKey}
+            disabled={!inputKey.trim()}
             className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             Start Creating

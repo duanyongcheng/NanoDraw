@@ -31,13 +31,17 @@ export const streamGeminiResponse = async function* (
   images: { base64Data: string; mimeType: string }[],
   settings: AppSettings
 ) {
-  const ai = new GoogleGenAI({ apiKey });
+  const ai = new GoogleGenAI(
+    settings.customEndpoint 
+      ? { apiKey, httpOptions: { baseUrl: settings.customEndpoint } }
+      : { apiKey }
+  );
   const currentUserContent = constructUserContent(prompt, images);
   const contentsPayload = [...history, currentUserContent];
 
   try {
     const responseStream = await ai.models.generateContentStream({
-      model: "gemini-3-pro-image-preview",
+      model: settings.modelName || "gemini-3-pro-image-preview",
       contents: contentsPayload,
       config: {
         imageConfig: {
