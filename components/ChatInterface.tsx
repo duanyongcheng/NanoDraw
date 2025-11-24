@@ -32,6 +32,10 @@ export const ChatInterface: React.FC = () => {
   const handleSend = async (text: string, attachments: Attachment[]) => {
     if (!apiKey) return;
 
+    // Capture the current history state *before* adding the new user message.
+    // This ensures that when we regenerate, we are using the sliced history from the store.
+    const currentHistory = useAppStore.getState().history;
+
     setLoading(true);
     const msgId = Date.now().toString();
 
@@ -53,16 +57,6 @@ export const ChatInterface: React.FC = () => {
       parts: userParts,
       timestamp: Date.now()
     };
-    
-    // We add to store *after* generation starts usually, but for instant UI feedback we can add now.
-    // However, the `addMessage` in store updates both UI messages and raw history.
-    // The raw history update requires the EXACT structure needed for API.
-    // So we'll trigger the API call, then update history on success to ensure sync.
-    // Wait, the instructions say "Append... to your history array".
-    // Let's optimistic update the UI for the user message, but carefully handle the API.
-    
-    // We'll dispatch a temporary message to the UI or use a distinct state if we want 100% safety.
-    // But for this app, let's use the store action to commit the User Turn immediately.
     
     // Construct Raw Content for History
     const userContent = {
@@ -96,7 +90,7 @@ export const ChatInterface: React.FC = () => {
 
       const stream = streamGeminiResponse(
         apiKey,
-        history, // Pass existing history (before user message is added in this scope's variable, which is correct)
+        currentHistory, 
         text,
         imagesPayload,
         settings,
