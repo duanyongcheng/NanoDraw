@@ -23,14 +23,32 @@ export const ChatInterface: React.FC = () => {
   } = useAppStore();
   
   const [showArcade, setShowArcade] = useState(false);
+  const [isExiting, setIsExiting] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (isLoading) {
         setShowArcade(true);
+        setIsExiting(false);
     }
   }, [isLoading]);
+
+  const handleCloseArcade = () => {
+    setIsExiting(true);
+    setTimeout(() => {
+        setShowArcade(false);
+        setIsExiting(false);
+    }, 200); // Match animation duration
+  };
+
+  const handleToggleArcade = () => {
+      if (showArcade && !isExiting) {
+          handleCloseArcade();
+      } else if (!showArcade) {
+          setShowArcade(true);
+      }
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -255,7 +273,8 @@ export const ChatInterface: React.FC = () => {
         {showArcade && (
             <ThinkingIndicator 
                 isThinking={isLoading} 
-                onClose={() => setShowArcade(false)} 
+                onClose={handleCloseArcade}
+                isExiting={isExiting}
             />
         )}
       </div>
@@ -264,7 +283,7 @@ export const ChatInterface: React.FC = () => {
         onSend={handleSend} 
         onStop={handleStop} 
         disabled={isLoading}
-        onOpenArcade={() => setShowArcade(true)}
+        onOpenArcade={handleToggleArcade}
       />
     </div>
   );

@@ -11,6 +11,11 @@
   --animate-heartbeat: heartbeat 2s ease-in-out infinite;
   --animate-heartbeat-slow: heartbeat-slow 3s ease-in-out infinite;
   --animate-heartbeat-mixed: heartbeat 2s ease-in-out infinite, heartbeat-slow 3s ease-in-out infinite;
+  
+  --animate-fade-in-up: fadeInUp 0.5s ease-out forwards;
+  --animate-fade-out-down: fadeOutDown 0.2s ease-in forwards;
+  
+  --animate-spin-slow: spin 3s linear infinite;
 }
 
 @keyframes heartbeat {
@@ -21,6 +26,36 @@
 @keyframes heartbeat-slow {
   0%, 100% { fill: transparent; }
   50% { fill: currentColor; }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@keyframes fadeOutDown {
+  from {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate3d(0, 30px, 0);
+  }
+}
+
+.fade-in-up {
+  animation: var(--animate-fade-in-up);
+}
+
+.fade-out-down {
+  animation: var(--animate-fade-out-down);
 }
 
 body {

@@ -9,9 +9,10 @@ import { BubbleGame } from './games/BubbleGame';
 interface Props {
     onClose?: () => void;
     isThinking?: boolean;
+    isExiting?: boolean;
 }
 
-export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true }) => {
+export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true, isExiting = false }) => {
   const [elapsed, setElapsed] = useState(0);
   const [phase, setPhase] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
@@ -79,7 +80,7 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true 
   };
 
   return (
-    <div className="flex w-full justify-center py-6 fade-in-up">
+    <div className={`flex w-full justify-center py-6 ${isExiting ? 'fade-out-down' : 'fade-in-up'}`}>
       <div className="relative w-full max-w-xl group">
         {/* Glow Background - Adapts to Theme */}
         <div className={`absolute -inset-1 rounded-xl blur-lg opacity-75 transition-colors duration-500 ${
@@ -139,7 +140,7 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true 
           </div>
 
           {/* Game Container */}
-          <div className={`w-full p-4 flex flex-col items-center justify-center min-h-[320px] transition-colors duration-300 ${
+          <div className={`w-full p-4 flex flex-col items-center justify-center min-h-80 transition-colors duration-300 ${
               isDark ? 'bg-gray-950' : 'bg-gray-100'
           }`}>
               {renderGame()}
