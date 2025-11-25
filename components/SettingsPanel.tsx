@@ -47,7 +47,13 @@ export const SettingsPanel: React.FC = () => {
             {(['1K', '2K', '4K'] as const).map((res) => (
               <button
                 key={res}
-                onClick={() => updateSettings({ resolution: res })}
+                onClick={() => {
+                  if (res === '2K' || res === '4K') {
+                    updateSettings({ resolution: res, streamResponse: false });
+                  } else {
+                    updateSettings({ resolution: res });
+                  }
+                }}
                 className={`rounded-lg border px-3 py-2 text-sm font-medium transition ${
                   settings.resolution === res
                     ? 'border-blue-500 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400'
@@ -143,8 +149,17 @@ export const SettingsPanel: React.FC = () => {
               <input
                 type="checkbox"
                 checked={settings.streamResponse}
-                onChange={(e) => updateSettings({ streamResponse: e.target.checked })}
-                className="sr-only peer"
+                onChange={(e) => {
+                  const checked = e.target.checked;
+                  if (checked && (settings.resolution === '2K' || settings.resolution === '4K')) {
+                    if (window.confirm("Warning: 2K or 4K resolution with streaming may result in incomplete content. Continue?")) {
+                      updateSettings({ streamResponse: true });
+                    }
+                  } else {
+                    updateSettings({ streamResponse: checked });
+                  }
+                }}
+                 className="sr-only peer"
               />
               <div className="h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-800 peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:bg-blue-600 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
             </div>
