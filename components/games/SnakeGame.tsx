@@ -114,14 +114,14 @@ export const SnakeGame: React.FC = () => {
     head.x += directionRef.current.x;
     head.y += directionRef.current.y;
 
-    // Check Wall Collision
+    // Wall Wrapping
     const widthTiles = (canvasRef.current?.width || 0) / TILE_SIZE;
     const heightTiles = (canvasRef.current?.height || 0) / TILE_SIZE;
 
-    if (head.x < 0 || head.x >= widthTiles || head.y < 0 || head.y >= heightTiles) {
-      setGameOver(true);
-      return;
-    }
+    if (head.x < 0) head.x = widthTiles - 1;
+    if (head.x >= widthTiles) head.x = 0;
+    if (head.y < 0) head.y = heightTiles - 1;
+    if (head.y >= heightTiles) head.y = 0;
 
     // Check Self Collision
     if (snakeRef.current.some(segment => segment.x === head.x && segment.y === head.y)) {
