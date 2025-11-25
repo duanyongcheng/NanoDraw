@@ -114,6 +114,13 @@ export const Puzzle2048: React.FC = () => {
   // Keyboard
   useEffect(() => {
       const handleKey = (e: KeyboardEvent) => {
+          // Restart on Game Over
+          if (gameOver && (e.key === 'Enter' || e.key === ' ')) {
+              e.preventDefault();
+              initGame();
+              return;
+          }
+
           if(['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)){
               e.preventDefault();
               if(e.key === 'ArrowUp') move('UP');
@@ -124,7 +131,7 @@ export const Puzzle2048: React.FC = () => {
       };
       window.addEventListener('keydown', handleKey);
       return () => window.removeEventListener('keydown', handleKey);
-  }, [move]);
+  }, [move, gameOver, initGame]);
 
   // Touch
   const handleTouchStart = (e: React.TouchEvent) => {

@@ -125,6 +125,22 @@ export const LifeGame: React.FC = () => {
     };
   }, [draw, initGrid, isRunning]);
 
+  // Keyboard Controls
+  useEffect(() => {
+      const handleKey = (e: KeyboardEvent) => {
+          if (e.code === 'Space') {
+              e.preventDefault();
+              setIsRunning(prev => !prev);
+          }
+          if (e.code === 'KeyR' || e.code === 'Enter') {
+              e.preventDefault();
+              initGrid(canvasRef.current?.width || 0, canvasRef.current?.height || 0);
+          }
+      };
+      window.addEventListener('keydown', handleKey);
+      return () => window.removeEventListener('keydown', handleKey);
+  }, [initGrid]);
+
   const handleInteract = (e: React.MouseEvent | React.TouchEvent) => {
     const canvas = canvasRef.current;
     if (!canvas) return;

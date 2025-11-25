@@ -169,10 +169,19 @@ export const SnakeGame: React.FC = () => {
   // Keyboard Controls
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
+      // Game Over Restart
+      if (gameOver && (e.key === 'Enter' || e.key === ' ')) {
+          e.preventDefault();
+          resetGame();
+          return;
+      }
+
       // Prevent scrolling when using arrows
-      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) {
+      if (["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", " "].includes(e.key)) {
         e.preventDefault();
       }
+
+      if (gameOver) return;
 
       const currentDir = directionRef.current;
       
@@ -194,7 +203,7 @@ export const SnakeGame: React.FC = () => {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [gameOver, resetGame]);
 
   return (
     <div className="relative flex flex-col items-center">
