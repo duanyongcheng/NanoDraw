@@ -155,7 +155,7 @@ export const SettingsPanel: React.FC = () => {
             </div>
           </label>
           <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-             Show the model's internal thought process before the final response.
+             Show the model's internal thought process. Disable this for models that don't support thinking (e.g. gemini-2.5-flash-image / Nano Banana).
           </p>
         </section>
         
