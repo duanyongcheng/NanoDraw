@@ -3,7 +3,7 @@ import { useAppStore } from './store/useAppStore';
 import { ApiKeyModal } from './components/ApiKeyModal';
 import { ChatInterface } from './components/ChatInterface';
 import { SettingsPanel } from './components/SettingsPanel';
-import { Settings, MessageSquare, AlertCircle } from 'lucide-react';
+import { Settings, MessageSquare, AlertCircle, Sun, Moon, Monitor } from 'lucide-react';
 
 const App: React.FC = () => {
   const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings } = useAppStore();
@@ -64,13 +64,22 @@ const App: React.FC = () => {
         </div>
         
         {apiKey && (
-          <button
-            onClick={toggleSettings}
-            className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            title="Settings"
-          >
-            <Settings className="h-6 w-6" />
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => updateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })}
+              className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              title="Toggle Theme"
+            >
+              {settings.theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
+            </button>
+            <button
+              onClick={toggleSettings}
+              className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              title="Settings"
+            >
+              <Settings className="h-6 w-6" />
+            </button>
+          </div>
         )}
       </header>
 
