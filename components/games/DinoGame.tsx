@@ -160,7 +160,6 @@ export const DinoGame: React.FC = () => {
   const canvasWidthRef = useRef<number>(800); // Track current width
   
   const [gameState, setGameState] = useState<GameStatus>('START');
-  const [displayScore, setDisplayScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
 
   const dinoRef = useRef<Dino>({
@@ -233,7 +232,6 @@ export const DinoGame: React.FC = () => {
     speedRef.current = INITIAL_SPEED;
     frameRef.current = 0;
     nextSpawnGapRef.current = 400;
-    setDisplayScore(0);
     setGameState('PLAYING');
     
     // Pre-seed
@@ -306,10 +304,11 @@ export const DinoGame: React.FC = () => {
 
     // Score
     distanceRef.current += currentSpeed;
-    if (distanceRef.current % 10 > 5) {
-       scoreRef.current++;
-       setDisplayScore(scoreRef.current);
-       if (scoreRef.current > 0 && scoreRef.current % 100 === 0) {
+    const newScore = Math.floor(distanceRef.current / 10);
+    
+    if (newScore > scoreRef.current) {
+       scoreRef.current = newScore;
+       if (newScore > 0 && newScore % 100 === 0) {
            playScoreSound();
        }
     }
@@ -337,6 +336,13 @@ export const DinoGame: React.FC = () => {
     });
 
     drawDino(ctx, dinoRef.current, frameRef.current);
+
+    // Draw Score on Canvas
+    ctx.fillStyle = '#535353';
+    ctx.font = 'bold 16px monospace';
+    ctx.textAlign = 'right';
+    const scoreText = `HI ${highScore.toString().padStart(5, '0')}  ${scoreRef.current.toString().padStart(5, '0')}`;
+    ctx.fillText(scoreText, width - 20, 30);
   };
 
   const loop = () => {
@@ -482,11 +488,6 @@ export const DinoGame: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center w-full select-none">
-      <div className="absolute top-4 right-4 flex gap-4 text-gray-600 font-bold font-mono text-sm sm:text-lg z-10">
-         <span>HI {highScore.toString().padStart(5, '0')}</span>
-         <span>{displayScore.toString().padStart(5, '0')}</span>
-      </div>
-
       <canvas
         ref={canvasRef}
         className="rounded-lg w-full bg-gray-50 block"
