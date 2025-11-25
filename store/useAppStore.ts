@@ -32,7 +32,7 @@ export const useAppStore = create<AppState>((set) => ({
   },
   messages: [],
   isLoading: false,
-  isSettingsOpen: false,
+  isSettingsOpen: true,
 
   setApiKey: (key) => set({ apiKey: key }),
   
