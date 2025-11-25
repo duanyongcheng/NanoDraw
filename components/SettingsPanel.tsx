@@ -41,7 +41,7 @@ export const SettingsPanel: React.FC = () => {
 
       <div className="space-y-8 flex-1">
         {/* Resolution */}
-        <section>
+        <section className='mb-4'>
           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Image Resolution</label>
           <div className="grid grid-cols-3 gap-2">
             {(['1K', '2K', '4K'] as const).map((res) => (
@@ -135,7 +135,7 @@ export const SettingsPanel: React.FC = () => {
         </section>
         
         {/* Share Configuration */}
-        <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
+        <section className="pt-4 border-t border-gray-200 dark:border-gray-800 mb-4">
            <div className="flex gap-2 mb-2">
              <button
                onClick={handleCreateBookmark}
