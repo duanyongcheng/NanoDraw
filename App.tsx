@@ -56,19 +56,21 @@ const App: React.FC = () => {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 px-6 py-4 backdrop-blur-md z-10 transition-colors duration-200">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-linear-to-br from-blue-500 to-purple-600 shadow-lg shadow-blue-500/20">
-            <MessageSquare className="h-6 w-6 text-white" />
+          <div className="flex h-10 w-10 items-center justify-center overflow-hidden">
+             <img src="https://theai.do/img/u.png" alt="Logo" className="h-full w-full object-cover" />
           </div>
           <div>
-            <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Gemini 3 Pro</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">客户端 AI • 图像预览</p>
+            <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Nano Banana Pro</h1>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              由 <a href="https://undyapi.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 hover:underline transition-colors">Undy API</a> 赞助联合开发
+            </p>
           </div>
         </div>
         
         {apiKey && (
           <div className="flex items-center gap-2">
             <a
-              href="https://github.com/faithleysath/NanoBananaProWeb"
+              href="https://github.com/faithleysath/UndyDraw"
               target="_blank"
               rel="noopener noreferrer"
               className="group rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"

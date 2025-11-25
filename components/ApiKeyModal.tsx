@@ -111,7 +111,7 @@ export const ApiKeyModal: React.FC = () => {
 
         <div className="mt-6 flex justify-center">
           <a 
-            href="https://aistudio.google.com/app/apikey" 
+            href="https://vip.undyingapi.com/console/token" 
             target="_blank" 
             rel="noopener noreferrer"
             className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
