@@ -33,7 +33,7 @@ export const GlobalDialog: React.FC = () => {
           </div>
 
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
-            {dialog.title || (dialog.type === 'alert' ? 'Info' : 'Confirm Action')}
+            {dialog.title || (dialog.type === 'alert' ? '提示' : '确认操作')}
           </h3>
           
           <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
@@ -46,7 +46,7 @@ export const GlobalDialog: React.FC = () => {
                 onClick={closeDialog}
                 className="flex-1 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
                 >
-                {dialog.cancelLabel || 'Cancel'}
+                {dialog.cancelLabel || '取消'}
                 </button>
             )}
             
@@ -58,7 +58,7 @@ export const GlobalDialog: React.FC = () => {
                     : 'bg-red-600 hover:bg-red-500 shadow-red-500/20'
               }`}
             >
-              {dialog.confirmLabel || 'Confirm'}
+              {dialog.confirmLabel || '确认'}
             </button>
           </div>
         </div>

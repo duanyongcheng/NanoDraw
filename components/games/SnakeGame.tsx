@@ -207,8 +207,8 @@ export const SnakeGame: React.FC = () => {
 
   return (
     <div className="relative flex flex-col items-center">
-      <div className="absolute top-2 left-4 text-xs font-mono text-blue-400">SCORE: {score}</div>
-      <div className="absolute top-2 right-4 text-xs font-mono text-yellow-500">HI: {highScore}</div>
+      <div className="absolute top-2 left-4 text-xs font-mono text-blue-400">分数: {score}</div>
+      <div className="absolute top-2 right-4 text-xs font-mono text-yellow-500">最高: {highScore}</div>
       
       <canvas
         ref={canvasRef}
@@ -220,20 +220,20 @@ export const SnakeGame: React.FC = () => {
       {gameOver && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/60 rounded-lg backdrop-blur-sm">
           <div className="text-center">
-            <h3 className="text-xl font-bold text-white mb-2">GAME OVER</h3>
+            <h3 className="text-xl font-bold text-white mb-2">游戏结束</h3>
             <button
               onClick={resetGame}
               className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-500 text-white rounded-full transition-colors mx-auto"
             >
               <RefreshCw className="h-4 w-4" />
-              Try Again
+              重试
             </button>
           </div>
         </div>
       )}
       
       <div className="mt-2 text-[10px] text-gray-500 dark:text-gray-400 font-mono">
-        Use Arrow Keys to Move
+        使用方向键移动
       </div>
     </div>
   );

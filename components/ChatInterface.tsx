@@ -169,12 +169,12 @@ export const ChatInterface: React.FC = () => {
 
     } catch (error: any) {
       if (error.name === 'AbortError' || abortControllerRef.current?.signal.aborted) {
-        console.log("Generation stopped by user");
+        console.log("用户已停止生成");
         return;
       }
-      console.error("Failed to generate", error);
+      console.error("生成失败", error);
       
-      let errorText = "Generation failed. Please check your network and API key.";
+      let errorText = "生成失败。请检查您的网络和 API Key。";
       if (error.message) {
           errorText = `Error: ${error.message}`;
       }
@@ -252,7 +252,7 @@ export const ChatInterface: React.FC = () => {
                <Sparkles className="h-16 w-16 text-blue-500 mb-4 mx-auto animate-pulse-fast" />
                <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Gemini 3 Pro</h3>
                <p className="max-w-xs text-sm text-gray-500 dark:text-gray-400">
-                 Start typing to create images, edit them conversationally, or ask complex questions.
+                 开始输入以创建图像，通过对话编辑它们，或询问复杂的问题。
                </p>
             </div>
           </div>

@@ -36,16 +36,16 @@ export class ErrorBoundary extends Component<Props, State> {
             <div className="mb-2 flex justify-center">
               <AlertTriangle className="h-6 w-6 text-red-400" />
             </div>
-            <h3 className="text-sm font-medium text-red-400">Component Error</h3>
+            <h3 className="text-sm font-medium text-red-400">组件错误</h3>
             <p className="mt-1 text-xs text-red-300/70">
-              Something went wrong rendering this content.
+              渲染此内容时出错。
             </p>
             <button
               onClick={() => this.setState({ hasError: false })}
               className="mt-3 flex items-center gap-2 rounded bg-red-500/20 px-3 py-1.5 text-xs font-medium text-red-300 hover:bg-red-500/30 mx-auto transition"
             >
               <RefreshCw className="h-3 w-3" />
-              Try Again
+              重试
             </button>
           </div>
         </div>

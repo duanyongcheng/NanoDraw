@@ -171,11 +171,11 @@ export const Puzzle2048: React.FC = () => {
     <div className="relative flex flex-col items-center w-full select-none">
       <div className="flex w-full justify-between px-4 mb-4">
           <div className="flex flex-col">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Score</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">分数</span>
               <span className="text-xl font-bold text-gray-700">{score}</span>
           </div>
           <div className="flex flex-col items-end">
-              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Best</span>
+              <span className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">最高分</span>
               <span className="text-xl font-bold text-gray-700">{bestScore}</span>
           </div>
       </div>
@@ -198,19 +198,19 @@ export const Puzzle2048: React.FC = () => {
           
           {gameOver && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/60 backdrop-blur-sm rounded-xl">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">Game Over</h3>
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">游戏结束</h3>
                 <button 
                     onClick={initGame}
                     className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-full shadow-lg hover:bg-blue-700 transition"
                 >
-                    <RefreshCw className="h-4 w-4" /> Try Again
+                    <RefreshCw className="h-4 w-4" /> 重试
                 </button>
             </div>
           )}
       </div>
       
       <div className="mt-4 text-[10px] text-gray-400 font-mono">
-        Swipe or use Arrow Keys to join numbers
+        滑动或使用方向键合并数字
       </div>
     </div>
   );

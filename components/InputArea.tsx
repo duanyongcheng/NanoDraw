@@ -106,7 +106,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
             onClick={() => fileInputRef.current?.click()}
             disabled={disabled || attachments.length >= 14}
             className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-blue-600 dark:hover:text-blue-400 transition disabled:opacity-50"
-            title="Upload Image"
+            title="上传图片"
           >
             <ImagePlus className="h-5 w-5" />
           </button>
@@ -119,7 +119,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
                     ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' 
                     : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
               }`}
-              title={isArcadeOpen ? "Close Arcade" : "Open Arcade"}
+              title={isArcadeOpen ? "关闭 Arcade" : "打开 Arcade"}
             >
               <Gamepad2 className="h-5 w-5" />
             </button>
@@ -131,7 +131,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={disabled}
-            placeholder="Describe an image..."
+            placeholder="描述一张图片..."
             className="mb-1 max-h-[200px] min-h-10 w-full resize-none bg-transparent py-2.5 text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none disabled:opacity-50 field-sizing-content"
             rows={1}
           />
@@ -140,7 +140,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
             <button
               onClick={onStop}
               className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-red-500 text-white shadow-lg shadow-red-500/20 hover:bg-red-600 transition"
-              title="Stop Generation"
+              title="停止生成"
             >
               <Square className="h-4 w-4 fill-current" />
             </button>
@@ -155,7 +155,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
           )}
         </div>
         <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
-           Enter to send, Shift + Enter for new line. Supports up to 14 reference images.
+           回车发送，Shift + 回车换行。支持最多 14 张参考图片。
         </div>
       </div>
     </div>

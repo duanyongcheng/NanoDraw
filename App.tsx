@@ -61,7 +61,7 @@ const App: React.FC = () => {
           </div>
           <div>
             <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Gemini 3 Pro</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">Client-Side AI • Image Preview</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">客户端 AI • 图像预览</p>
           </div>
         </div>
         
@@ -72,21 +72,21 @@ const App: React.FC = () => {
               target="_blank"
               rel="noopener noreferrer"
               className="group rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              title="GitHub Repository"
+              title="GitHub 仓库"
             >
               <Github className="h-6 w-6 animate-heartbeat-mixed group-hover:animate-none" />
             </a>
             <button
               onClick={() => updateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })}
               className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              title="Toggle Theme"
+              title="切换主题"
             >
               {settings.theme === 'dark' ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
             </button>
             <button
               onClick={toggleSettings}
               className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              title="Settings"
+              title="设置"
             >
               <Settings className="h-6 w-6" />
             </button>

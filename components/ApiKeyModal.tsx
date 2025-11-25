@@ -35,9 +35,9 @@ export const ApiKeyModal: React.FC = () => {
           </div>
         </div>
         
-        <h2 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-white">Enter API Key</h2>
+        <h2 className="mb-2 text-center text-2xl font-bold text-gray-900 dark:text-white">输入 API Key</h2>
         <p className="mb-8 text-center text-gray-500 dark:text-gray-400">
-          This app runs 100% on your browser. Your key is stored locally on your device.
+          此应用 100% 在您的浏览器中运行。您的 Key 仅存储在本地设备上。
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -63,7 +63,7 @@ export const ApiKeyModal: React.FC = () => {
             >
               <div className="flex items-center gap-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 group-hover:underline">
                 <Settings2 className="h-3 w-3" />
-                <span>Advanced Configuration</span>
+                <span>高级配置</span>
                 {showAdvanced ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
               </div>
             </button>
@@ -76,7 +76,7 @@ export const ApiKeyModal: React.FC = () => {
               <div className="overflow-hidden">
                 <div className="mt-2 rounded-lg bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 p-4 space-y-4">
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Custom Endpoint (Optional)</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">自定义接口地址 (可选)</label>
                     <input
                       type="text"
                       value={endpoint}
@@ -86,7 +86,7 @@ export const ApiKeyModal: React.FC = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-500 mb-1">Model Name</label>
+                    <label className="block text-xs font-medium text-gray-500 mb-1">模型名称</label>
                     <input
                       type="text"
                       value={model}
@@ -105,7 +105,7 @@ export const ApiKeyModal: React.FC = () => {
             disabled={!inputKey.trim()}
             className="w-full rounded-lg bg-blue-600 px-4 py-3 font-semibold text-white transition hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Start Creating
+            开始创作
           </button>
         </form>
 
@@ -116,7 +116,7 @@ export const ApiKeyModal: React.FC = () => {
             rel="noopener noreferrer"
             className="flex items-center text-sm text-gray-500 hover:text-blue-600 dark:hover:text-blue-400 transition"
           >
-            <span>Get a Gemini API Key</span>
+            <span>获取 Gemini API Key</span>
             <ExternalLink className="ml-1 h-3 w-3" />
           </a>
         </div>

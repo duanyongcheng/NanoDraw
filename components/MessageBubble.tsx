@@ -74,7 +74,7 @@ const ThinkingBlock: React.FC<{ parts: Part[], duration?: number }> = ({ parts, 
       >
         {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
         <BrainCircuit className="h-3 w-3" />
-        <span>Thinking Process</span>
+        <span>思考过程</span>
         {duration !== undefined && duration > 0 && (
            <span className="ml-auto opacity-70">({duration.toFixed(1)}s)</span>
         )}
@@ -98,9 +98,9 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
   const handleDelete = () => {
     showDialog({
         type: 'confirm',
-        title: 'Delete Message',
-        message: "Are you sure you want to delete this message?",
-        confirmLabel: "Delete",
+        title: '删除消息',
+        message: "您确定要删除这条消息吗？",
+        confirmLabel: "删除",
         onConfirm: () => onDelete(message.id)
     });
   };
@@ -231,7 +231,7 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
           
           {message.isError && (
              <div className="mt-2 text-xs text-red-300 font-medium">
-                Failed to generate response. Please check your API key or connection.
+                生成响应失败。请检查您的 API Key 或网络连接。
              </div>
           )}
         </div>
@@ -247,14 +247,14 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
                 <button 
                   onClick={() => onRegenerate(message.id)}
                   className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400"
-                  title="Regenerate from here"
+                  title="从此重新生成"
                 >
                   <RotateCcw className="h-3 w-3" />
                 </button>
                 <button 
                   onClick={handleDelete}
                   className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 hover:text-red-600 dark:hover:text-red-400"
-                  title="Delete message"
+                  title="删除消息"
                 >
                   <Trash2 className="h-3 w-3" />
                 </button>

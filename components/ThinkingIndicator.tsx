@@ -21,11 +21,11 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true,
   const [isDark, setIsDark] = useState(true);
 
   const phases = [
-    "Thinking...",
-    "Analyzing context...",
-    "Connecting ideas...",
-    "Generating response...",
-    "Polishing details..."
+    "思考中...",
+    "分析上下文中...",
+    "连接思路...",
+    "生成回复中...",
+    "完善细节..."
   ];
 
   useEffect(() => {
@@ -110,7 +110,7 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true,
                     )}
                 </div>
                 <span className={`text-sm font-medium transition-all duration-500 min-w-[150px] ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                    {isThinking ? phases[phase] : "Response Ready!"}
+                    {isThinking ? phases[phase] : "回复已就绪！"}
                 </span>
              </div>
              
@@ -131,7 +131,7 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true,
                         className={`p-1 rounded-full transition-colors ${
                             isDark ? 'hover:bg-gray-800 text-gray-500 hover:text-gray-300' : 'hover:bg-gray-200 text-gray-400 hover:text-gray-600'
                         }`}
-                        title="Close Arcade"
+                        title="关闭 Arcade"
                      >
                          <X className="h-4 w-4" />
                      </button>
@@ -152,7 +152,7 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true,
           }`}>
              <div className="flex items-center justify-center gap-2 text-[10px] text-gray-500 uppercase tracking-widest font-mono">
                 <Gamepad2 className="h-3 w-3" />
-                <span>Waiting Arcade Mode • {isDark ? 'Night' : 'Day'}</span>
+                <span>等待 Arcade 模式 • {isDark ? '夜间' : '日间'}</span>
              </div>
           </div>
 

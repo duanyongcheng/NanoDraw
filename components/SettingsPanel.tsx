@@ -25,13 +25,13 @@ export const SettingsPanel: React.FC = () => {
 
     // Copy to clipboard
     navigator.clipboard.writeText(url).then(() => {
-        addToast("URL updated & copied! Press Ctrl+D to bookmark.", 'success');
+        addToast("URL 已更新并复制！按 Ctrl+D 添加书签。", 'success');
     }).catch(err => {
-        console.error("Failed to copy", err);
+        console.error("复制失败", err);
         showDialog({
             type: 'alert',
-            title: 'Copy Failed',
-            message: `Please copy this URL manually:\n${url}`,
+            title: '复制失败',
+            message: `请手动复制此 URL：\n${url}`,
             onConfirm: () => {}
         });
     });
@@ -40,7 +40,7 @@ export const SettingsPanel: React.FC = () => {
   return (
     <div className="flex flex-col h-full">
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">Settings</h2>
+        <h2 className="text-xl font-semibold text-gray-900 dark:text-white">设置</h2>
         <button onClick={toggleSettings} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg sm:hidden">
           <X className="h-5 w-5 text-gray-500 dark:text-gray-400" />
         </button>
@@ -49,7 +49,7 @@ export const SettingsPanel: React.FC = () => {
       <div className="space-y-8 flex-1">
         {/* Resolution */}
         <section className='mb-4'>
-          <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Image Resolution</label>
+          <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">图像分辨率</label>
           <div className="grid grid-cols-3 gap-2">
             {(['1K', '2K', '4K'] as const).map((res) => (
               <button
@@ -75,7 +75,7 @@ export const SettingsPanel: React.FC = () => {
 
         {/* Aspect Ratio */}
         <section>
-          <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">Aspect Ratio</label>
+          <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">长宽比</label>
           <div className="grid grid-cols-3 gap-2">
             {(['Auto', '1:1', '3:4', '4:3', '9:16', '16:9'] as const).map((ratio) => {
               const isActive = settings.aspectRatio === ratio;
@@ -113,7 +113,7 @@ export const SettingsPanel: React.FC = () => {
         {/* Grounding */}
         <section>
           <label className="flex items-center justify-between cursor-pointer group">
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Google Search Grounding</span>
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Google 搜索定位</span>
             <div className="relative">
               <input
                 type="checkbox"
@@ -125,14 +125,14 @@ export const SettingsPanel: React.FC = () => {
             </div>
           </label>
           <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-            Allow Gemini to access real-time information via Google Search.
+            允许 Gemini 通过 Google 搜索获取实时信息。
           </p>
         </section>
 
         {/* Thinking Process */}
         <section>
           <label className="flex items-center justify-between cursor-pointer group">
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Show Thinking Process</span>
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">显示思考过程</span>
             <div className="relative">
               <input
                 type="checkbox"
@@ -144,14 +144,14 @@ export const SettingsPanel: React.FC = () => {
             </div>
           </label>
           <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-             Show the model's internal thought process. Disable this for models that don't support thinking (e.g. gemini-2.5-flash-image / Nano Banana).
+             显示模型的内部思考过程。对于不支持思考的模型（例如 gemini-2.5-flash-image / Nano Banana），请禁用此选项。
           </p>
         </section>
 
         {/* Streaming */}
         <section>
           <label className="flex items-center justify-between cursor-pointer group">
-            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Stream Response</span>
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">流式响应</span>
             <div className="relative">
               <input
                 type="checkbox"
@@ -161,9 +161,9 @@ export const SettingsPanel: React.FC = () => {
                   if (checked && (settings.resolution === '2K' || settings.resolution === '4K')) {
                     showDialog({
                         type: 'confirm',
-                        title: 'Potential Issue',
-                        message: "Warning: 2K or 4K resolution with streaming may result in incomplete content. Continue?",
-                        confirmLabel: "Enable Anyway",
+                        title: '潜在问题',
+                        message: "警告：2K 或 4K 分辨率配合流式传输可能会导致内容不完整。是否继续？",
+                        confirmLabel: "仍然启用",
                         onConfirm: () => updateSettings({ streamResponse: true })
                     });
                   } else {
@@ -176,7 +176,7 @@ export const SettingsPanel: React.FC = () => {
             </div>
           </label>
           <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-             Stream the model's response token by token. Disable for single-shot responses.
+             逐个 token 流式传输模型的响应。对于一次性响应请禁用。
           </p>
         </section>
         
@@ -188,17 +188,17 @@ export const SettingsPanel: React.FC = () => {
                className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 p-3 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition"
              >
                <Share2 className="h-4 w-4" />
-               <span className="text-xs sm:text-sm">Update URL</span>
+               <span className="text-xs sm:text-sm">更新 URL</span>
              </button>
 
              <a
                href={getBookmarkUrl()}
                onClick={(e) => e.preventDefault()} // Prevent navigation, strictly for dragging
                className="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-3 text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-grab active:cursor-grabbing transition text-sm font-medium"
-               title="Drag this button to your bookmarks bar"
+               title="将此按钮拖动到书签栏"
              >
                <Bookmark className="h-4 w-4" />
-               <span className="text-xs sm:text-sm">Drag to Bookmark</span>
+               <span className="text-xs sm:text-sm">拖动到书签</span>
              </a>
            </div>
         </section>
@@ -209,46 +209,46 @@ export const SettingsPanel: React.FC = () => {
                 onClick={() => {
                     showDialog({
                         type: 'confirm',
-                        title: 'Clear History',
-                        message: "Are you sure you want to delete all chat history? This action cannot be undone.",
-                        confirmLabel: "Clear",
+                        title: '清除历史记录',
+                        message: "您确定要删除所有聊天记录吗？此操作无法撤销。",
+                        confirmLabel: "清除",
                         onConfirm: () => {
                             clearHistory();
                             toggleSettings();
-                            addToast("Conversation cleared", 'success');
+                            addToast("对话已清除", 'success');
                         }
                     });
                 }}
                 className="w-full flex items-center justify-center gap-2 rounded-lg border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/5 p-3 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/10 transition mb-3"
             >
                 <Trash2 className="h-4 w-4" />
-                <span>Clear Conversation</span>
+                <span>清除对话</span>
             </button>
 
             <button
                 onClick={() => {
                     showDialog({
                         type: 'confirm',
-                        title: 'Remove API Key',
-                        message: "Are you sure you want to remove your API Key? Your chat history will be preserved.",
-                        confirmLabel: "Remove",
+                        title: '移除 API Key',
+                        message: "您确定要移除您的 API Key 吗？您的聊天记录将被保留。",
+                        confirmLabel: "移除",
                         onConfirm: () => {
                             removeApiKey();
-                            addToast("API Key removed", 'info');
+                            addToast("API Key 已移除", 'info');
                         }
                     });
                 }}
                 className="w-full flex items-center justify-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
             >
                 <LogOut className="h-4 w-4" />
-                <span>Clear API Key</span>
+                <span>清除 API Key</span>
             </button>
         </section>
 
         {/* Info */}
         <div className="mt-1 pb-4 text-center text-[10px] text-gray-400 dark:text-gray-600 space-y-1">
-           <p>Model: {settings.modelName || 'Default'}</p>
-           {settings.customEndpoint && <p className="truncate px-4">Endpoint: {settings.customEndpoint}</p>}
+           <p>模型: {settings.modelName || '默认'}</p>
+           {settings.customEndpoint && <p className="truncate px-4">接口地址: {settings.customEndpoint}</p>}
         </div>
       </div>
     </div>

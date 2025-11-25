@@ -174,7 +174,7 @@ export const LifeGame: React.FC = () => {
   return (
     <div className="relative flex flex-col items-center w-full">
       <div className="absolute top-2 left-4 text-xs font-mono text-purple-400 z-10 pointer-events-none">
-        GEN: {generation}
+        代数: {generation}
       </div>
       
       <div className="absolute top-2 right-4 flex gap-2 z-10">
@@ -204,7 +204,7 @@ export const LifeGame: React.FC = () => {
       />
       
       <div className="mt-2 text-[10px] text-gray-500 dark:text-gray-400 font-mono">
-        Draw on screen to create life
+        在屏幕上绘制以创造生命
       </div>
     </div>
   );

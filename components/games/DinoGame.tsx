@@ -446,7 +446,7 @@ export const DinoGame: React.FC = () => {
                           ctx.fillStyle = '#535353';
                           ctx.font = '20px monospace';
                           ctx.textAlign = 'center';
-                          ctx.fillText("PRESS SPACE TO JUMP", canvas.width / 2, CANVAS_HEIGHT / 2 - 20);
+                          ctx.fillText("按空格键跳跃", canvas.width / 2, CANVAS_HEIGHT / 2 - 20);
                       } else {
                           draw(ctx);
                       }
@@ -496,19 +496,19 @@ export const DinoGame: React.FC = () => {
 
       {gameState === 'GAME_OVER' && (
         <div className="absolute inset-0 flex flex-col items-center justify-center bg-white/40 backdrop-blur-[2px] rounded-lg z-20">
-          <h3 className="text-2xl font-bold text-gray-700 mb-4">GAME OVER</h3>
+          <h3 className="text-2xl font-bold text-gray-700 mb-4">游戏结束</h3>
           <button
             onClick={resetGame}
             className="flex items-center gap-2 px-4 py-2 bg-gray-800 hover:bg-gray-700 text-white rounded-full transition-colors mx-auto"
           >
             <RefreshCw className="h-4 w-4" />
-            Try Again
+            重试
           </button>
         </div>
       )}
       
       <div className="mt-2 text-[10px] text-gray-400 font-mono">
-        Space/Up to Jump, Down to Duck
+        空格/上方向键跳跃，下方向键下蹲
       </div>
     </div>
   );
