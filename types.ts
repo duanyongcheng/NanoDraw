@@ -28,6 +28,7 @@ export interface ChatMessage {
   parts: Part[];
   timestamp: number;
   isError?: boolean;
+  thinkingDuration?: number;
 }
 
 export interface Attachment {

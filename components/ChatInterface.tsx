@@ -84,6 +84,10 @@ export const ChatInterface: React.FC = () => {
 
       abortControllerRef.current = new AbortController();
 
+      const startTime = Date.now();
+      let thinkingDuration = 0;
+      let isThinking = false;
+
       const stream = streamGeminiResponse(
         apiKey,
         history, 
@@ -94,7 +98,24 @@ export const ChatInterface: React.FC = () => {
       );
 
       for await (const chunk of stream) {
-          updateLastMessage(chunk.modelParts);
+          // Check if currently generating thought
+          const lastPart = chunk.modelParts[chunk.modelParts.length - 1];
+          if (lastPart && lastPart.thought) {
+              isThinking = true;
+              thinkingDuration = (Date.now() - startTime) / 1000;
+          } else if (isThinking && lastPart && !lastPart.thought) {
+             // Just finished thinking
+             isThinking = false;
+          }
+
+          updateLastMessage(chunk.modelParts, false, isThinking ? thinkingDuration : undefined);
+      }
+      
+      // Final update to ensure duration is set if ended while thinking (unlikely but possible)
+      // or to set the final duration if the whole response was a thought
+      if (isThinking) {
+          thinkingDuration = (Date.now() - startTime) / 1000;
+          updateLastMessage(useAppStore.getState().messages.slice(-1)[0].parts, false, thinkingDuration);
       }
 
     } catch (error: any) {

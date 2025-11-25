@@ -11,7 +11,7 @@ interface AppState {
   setApiKey: (key: string) => void;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
   addMessage: (message: ChatMessage) => void;
-  updateLastMessage: (parts: Part[], isError?: boolean) => void;
+  updateLastMessage: (parts: Part[], isError?: boolean, thinkingDuration?: number) => void;
   setLoading: (loading: boolean) => void;
   toggleSettings: () => void;
   clearHistory: () => void;
@@ -44,7 +44,7 @@ export const useAppStore = create<AppState>((set) => ({
       messages: [...state.messages, message],
     })),
 
-  updateLastMessage: (parts, isError = false) => 
+  updateLastMessage: (parts, isError = false, thinkingDuration) => 
     set((state) => {
         const messages = [...state.messages];
         
@@ -52,7 +52,8 @@ export const useAppStore = create<AppState>((set) => ({
             messages[messages.length - 1] = {
                 ...messages[messages.length - 1],
                 parts: [...parts], // Create a copy to trigger re-renders
-                isError: isError
+                isError: isError,
+                ...(thinkingDuration !== undefined && { thinkingDuration })
             };
         }
         

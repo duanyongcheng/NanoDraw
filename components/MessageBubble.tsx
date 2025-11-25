@@ -62,7 +62,7 @@ const renderThinkingContent = (part: Part, index: number) => {
   return null;
 };
 
-const ThinkingBlock: React.FC<{ parts: Part[] }> = ({ parts }) => {
+const ThinkingBlock: React.FC<{ parts: Part[], duration?: number }> = ({ parts, duration }) => {
   const [isExpanded, setIsExpanded] = useState(true);
 
   return (
@@ -74,6 +74,9 @@ const ThinkingBlock: React.FC<{ parts: Part[] }> = ({ parts }) => {
         {isExpanded ? <ChevronDown className="h-3 w-3" /> : <ChevronRight className="h-3 w-3" />}
         <BrainCircuit className="h-3 w-3" />
         <span>Thinking Process</span>
+        {duration !== undefined && duration > 0 && (
+           <span className="ml-auto opacity-70">({duration.toFixed(1)}s)</span>
+        )}
       </button>
       
       {isExpanded && (
@@ -119,7 +122,7 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
   const renderContent = (item: Part | Part[], index: number) => {
     // 1. Handle Thinking Block Group
     if (Array.isArray(item)) {
-      return <ThinkingBlock key={`think-${index}`} parts={item} />;
+      return <ThinkingBlock key={`think-${index}`} parts={item} duration={message.thinkingDuration} />;
     }
     
     const part = item;
