@@ -3,6 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
 import { ErrorBoundary } from './ErrorBoundary';
+import { ThinkingIndicator } from './ThinkingIndicator';
 import { streamGeminiResponse, generateContent } from '../services/geminiService';
 import { convertMessagesToHistory } from '../utils/messageUtils';
 import { ChatMessage, Attachment, Part } from '../types';
@@ -244,11 +245,7 @@ export const ChatInterface: React.FC = () => {
           </ErrorBoundary>
         ))}
 
-        {isLoading && (
-          <div className="flex w-full items-center justify-center py-4">
-            <span className="animate-pulse font-medium text-gray-500 text-sm">Gemini is thinking...</span>
-          </div>
-        )}
+        {isLoading && <ThinkingIndicator />}
       </div>
 
       <InputArea onSend={handleSend} onStop={handleStop} disabled={isLoading} />
