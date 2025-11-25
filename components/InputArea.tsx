@@ -91,7 +91,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
           </div>
         )}
 
-        <div className="relative flex items-end gap-2 rounded-2xl bg-gray-50 dark:bg-gray-800 p-2 shadow-inner ring-1 ring-gray-200 dark:ring-gray-700/50 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all duration-200">
+        <div className="relative flex items-end gap-1 rounded-2xl bg-gray-50 dark:bg-gray-800 p-2 shadow-inner ring-1 ring-gray-200 dark:ring-gray-700/50 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all duration-200">
           
           <input
             type="file"
@@ -131,7 +131,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
             onChange={(e) => setText(e.target.value)}
             onKeyDown={handleKeyDown}
             disabled={disabled}
-            placeholder="Describe an image or ask a question..."
+            placeholder="Describe an image..."
             className="mb-1 max-h-[200px] min-h-10 w-full resize-none bg-transparent py-2.5 text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none disabled:opacity-50 field-sizing-content"
             rows={1}
           />

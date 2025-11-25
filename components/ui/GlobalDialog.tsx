@@ -13,7 +13,7 @@ export const GlobalDialog: React.FC = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/50 dark:bg-black/80 backdrop-blur-sm px-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-100 flex items-center justify-center bg-black/50 dark:bg-black/80 backdrop-blur-sm px-4 animate-in fade-in duration-200">
       <div 
         className="w-full max-w-md rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-2xl p-6 transform transition-all animate-in zoom-in-95 duration-200"
         role="dialog"
