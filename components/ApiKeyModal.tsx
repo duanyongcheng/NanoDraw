@@ -82,7 +82,7 @@ export const ApiKeyModal: React.FC = () => {
                       value={endpoint}
                       onChange={(e) => setEndpoint(e.target.value)}
                       className="w-full rounded-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
-                      placeholder="https://generativelanguage.googleapis.com"
+                      placeholder="https://undyapi.com"
                     />
                   </div>
                   <div>
