@@ -1,9 +1,11 @@
 import React from 'react';
 import { useAppStore } from '../store/useAppStore';
+import { useUiStore } from '../store/useUiStore';
 import { X, LogOut, Trash2, Sun, Moon, Monitor, Share2, Bookmark } from 'lucide-react';
 
 export const SettingsPanel: React.FC = () => {
   const { apiKey, settings, updateSettings, toggleSettings, removeApiKey, clearHistory } = useAppStore();
+  const { addToast, showDialog } = useUiStore();
 
   const getBookmarkUrl = () => {
     if (!apiKey) return window.location.href;
@@ -23,10 +25,15 @@ export const SettingsPanel: React.FC = () => {
 
     // Copy to clipboard
     navigator.clipboard.writeText(url).then(() => {
-        alert("URL updated & copied! \n\n1. The address bar now contains your settings.\n2. Press Ctrl+D (Cmd+D) to bookmark this page immediately.");
+        addToast("URL updated & copied! Press Ctrl+D to bookmark.", 'success');
     }).catch(err => {
         console.error("Failed to copy", err);
-        prompt("Copy this URL or press Ctrl+D to bookmark:", url);
+        showDialog({
+            type: 'alert',
+            title: 'Copy Failed',
+            message: `Please copy this URL manually:\n${url}`,
+            onConfirm: () => {}
+        });
     });
   };
 
@@ -152,9 +159,13 @@ export const SettingsPanel: React.FC = () => {
                 onChange={(e) => {
                   const checked = e.target.checked;
                   if (checked && (settings.resolution === '2K' || settings.resolution === '4K')) {
-                    if (window.confirm("Warning: 2K or 4K resolution with streaming may result in incomplete content. Continue?")) {
-                      updateSettings({ streamResponse: true });
-                    }
+                    showDialog({
+                        type: 'confirm',
+                        title: 'Potential Issue',
+                        message: "Warning: 2K or 4K resolution with streaming may result in incomplete content. Continue?",
+                        confirmLabel: "Enable Anyway",
+                        onConfirm: () => updateSettings({ streamResponse: true })
+                    });
                   } else {
                     updateSettings({ streamResponse: checked });
                   }
@@ -196,10 +207,17 @@ export const SettingsPanel: React.FC = () => {
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
             <button
                 onClick={() => {
-                    if (window.confirm("Clear all chat history?")) {
-                        clearHistory();
-                        toggleSettings();
-                    }
+                    showDialog({
+                        type: 'confirm',
+                        title: 'Clear History',
+                        message: "Are you sure you want to delete all chat history? This action cannot be undone.",
+                        confirmLabel: "Clear",
+                        onConfirm: () => {
+                            clearHistory();
+                            toggleSettings();
+                            addToast("Conversation cleared", 'success');
+                        }
+                    });
                 }}
                 className="w-full flex items-center justify-center gap-2 rounded-lg border border-red-200 dark:border-red-500/30 bg-red-50 dark:bg-red-500/5 p-3 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/10 transition mb-3"
             >
@@ -209,9 +227,16 @@ export const SettingsPanel: React.FC = () => {
 
             <button
                 onClick={() => {
-                    if (window.confirm("Remove API Key? (Chat history will be preserved)")) {
-                        removeApiKey();
-                    }
+                    showDialog({
+                        type: 'confirm',
+                        title: 'Remove API Key',
+                        message: "Are you sure you want to remove your API Key? Your chat history will be preserved.",
+                        confirmLabel: "Remove",
+                        onConfirm: () => {
+                            removeApiKey();
+                            addToast("API Key removed", 'info');
+                        }
+                    });
                 }}
                 className="w-full flex items-center justify-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
             >

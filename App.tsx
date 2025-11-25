@@ -3,6 +3,8 @@ import { useAppStore } from './store/useAppStore';
 import { ApiKeyModal } from './components/ApiKeyModal';
 import { ChatInterface } from './components/ChatInterface';
 import { SettingsPanel } from './components/SettingsPanel';
+import { ToastContainer } from './components/ui/ToastContainer';
+import { GlobalDialog } from './components/ui/GlobalDialog';
 import { Settings, MessageSquare, AlertCircle, Sun, Moon, Monitor, Github } from 'lucide-react';
 
 const App: React.FC = () => {
@@ -144,6 +146,8 @@ const App: React.FC = () => {
 
       {/* Modals */}
       {!apiKey && <ApiKeyModal />}
+      <ToastContainer />
+      <GlobalDialog />
     </div>
   );
 };

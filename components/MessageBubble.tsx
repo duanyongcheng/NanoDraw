@@ -3,6 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChatMessage, Part } from '../types';
 import { User, Sparkles, ChevronDown, ChevronRight, BrainCircuit, Trash2, RotateCcw } from 'lucide-react';
+import { useUiStore } from '../store/useUiStore';
 
 interface Props {
   message: ChatMessage;
@@ -92,11 +93,16 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
   const isUser = message.role === 'user';
   const [showActions, setShowActions] = useState(false);
   const actionsDisabled = isGenerating;
+  const { showDialog } = useUiStore();
 
   const handleDelete = () => {
-    if (window.confirm("Are you sure you want to delete this message?")) {
-      onDelete(message.id);
-    }
+    showDialog({
+        type: 'confirm',
+        title: 'Delete Message',
+        message: "Are you sure you want to delete this message?",
+        confirmLabel: "Delete",
+        onConfirm: () => onDelete(message.id)
+    });
   };
 
   // Group parts: consecutive thinking parts should be grouped together
