@@ -26,7 +26,7 @@ export const LifeGame: React.FC = () => {
     // Randomize start
     for (let i = 0; i < cols; i++) {
       for (let j = 0; j < rows; j++) {
-        newGrid[i][j] = Math.random() > 0.7; // 30% chance of life
+        newGrid[i][j] = Math.random() > 0.85; // 15% chance of life - Cleaner start
       }
     }
     
