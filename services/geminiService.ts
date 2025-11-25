@@ -63,9 +63,11 @@ export const streamGeminiResponse = async function* (
         },
         tools: settings.useGrounding ? [{ googleSearch: {} }] : [],
         responseModalities: ["TEXT", "IMAGE"],
-        thinkingConfig: {
-            includeThoughts: true,
-        },
+        ...(settings.enableThinking ? {
+            thinkingConfig: {
+                includeThoughts: true,
+            }
+        } : {}),
       },
     });
 

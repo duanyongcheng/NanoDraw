@@ -26,13 +26,14 @@ export const useAppStore = create<AppState>((set) => ({
     resolution: '1K',
     aspectRatio: '1:1',
     useGrounding: false,
+    enableThinking: true,
     customEndpoint: '',
     modelName: 'gemini-3-pro-image-preview',
     theme: 'system',
   },
   messages: [],
   isLoading: false,
-  isSettingsOpen: true,
+  isSettingsOpen: window.innerWidth > 640, // Open by default only on desktop (sm breakpoint)
 
   setApiKey: (key) => set({ apiKey: key }),
   

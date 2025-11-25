@@ -114,6 +114,25 @@ export const SettingsPanel: React.FC = () => {
             Allow Gemini to access real-time information via Google Search.
           </p>
         </section>
+
+        {/* Thinking Process */}
+        <section>
+          <label className="flex items-center justify-between cursor-pointer group">
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Show Thinking Process</span>
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={settings.enableThinking}
+                onChange={(e) => updateSettings({ enableThinking: e.target.checked })}
+                className="sr-only peer"
+              />
+              <div className="h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-800 peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:bg-blue-600 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+            </div>
+          </label>
+          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+             Show the model's internal thought process before the final response.
+          </p>
+        </section>
         
         {/* Data Management */}
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800">

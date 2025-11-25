@@ -2,6 +2,7 @@ export interface AppSettings {
   resolution: '1K' | '2K' | '4K';
   aspectRatio: '1:1' | '3:4' | '4:3' | '9:16' | '16:9';
   useGrounding: boolean;
+  enableThinking: boolean;
   customEndpoint?: string;
   modelName?: string;
   theme: 'light' | 'dark' | 'system';
