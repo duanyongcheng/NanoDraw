@@ -215,12 +215,12 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
       {/* Lightbox / Preview Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black/95 z-60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 bg-white/95 dark:bg-black/95 z-60 flex items-center justify-center p-4 backdrop-blur-sm animate-in fade-in duration-200"
           onClick={() => setSelectedImage(null)}
         >
           {/* Navigation Buttons */}
           <button
-            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+            className="absolute left-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-900 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
             onClick={(e) => {
               e.stopPropagation();
               navigateImage(-1);
@@ -231,7 +231,7 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
           </button>
           
           <button
-            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-white/10 hover:bg-white/20 text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-3 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-900 dark:bg-white/10 dark:hover:bg-white/20 dark:text-white transition disabled:opacity-30 disabled:cursor-not-allowed"
             onClick={(e) => {
               e.stopPropagation();
               navigateImage(1);
@@ -255,13 +255,13 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
             </div>
 
             {/* Info & Actions */}
-            <div className="bg-gray-900/80 backdrop-blur-md rounded-xl p-4 text-white border border-white/10">
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md rounded-xl p-4 text-gray-900 dark:text-white border border-gray-200 dark:border-white/10">
               <div className="flex flex-col sm:flex-row gap-4 justify-between items-start sm:items-center mb-4">
                 <div className="flex-1">
                    <p className="text-sm font-medium mb-1 line-clamp-2" title={selectedImage.prompt}>
                      {selectedImage.prompt || '无描述'}
                    </p>
-                   <p className="text-xs text-gray-400">
+                   <p className="text-xs text-gray-500 dark:text-gray-400">
                      {new Date(selectedImage.timestamp).toLocaleString()} 
                      {selectedImage.modelName && ` · ${selectedImage.modelName}`}
                    </p>
@@ -269,21 +269,21 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
                 <div className="flex items-center gap-2 shrink-0">
                   <button
                     onClick={() => handleCopyPrompt(selectedImage.prompt)}
-                    className="p-2 rounded-lg bg-white/10 hover:bg-white/20 text-gray-300 hover:text-white transition"
+                    className="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 text-gray-600 hover:text-gray-900 dark:bg-white/10 dark:hover:bg-white/20 dark:text-gray-300 dark:hover:text-white transition"
                     title="复制提示词"
                   >
                     <Copy className="h-4 w-4" />
                   </button>
                   <button
                     onClick={() => handleDeleteImage(selectedImage)}
-                    className="p-2 rounded-lg bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 transition"
+                    className="p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 dark:bg-red-500/10 dark:hover:bg-red-500/20 dark:text-red-400 dark:hover:text-red-300 transition"
                     title="删除图片"
                   >
                     <Trash2 className="h-4 w-4" />
                   </button>
                   <button
                      onClick={() => setSelectedImage(null)}
-                     className="sm:hidden p-2 rounded-lg bg-white/10 text-gray-300"
+                     className="sm:hidden p-2 rounded-lg bg-gray-100 text-gray-600 dark:bg-white/10 dark:text-gray-300"
                   >
                     <X className="h-4 w-4" />
                   </button>
@@ -293,7 +293,7 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
               <div className="grid grid-cols-2 gap-3">
                  <button
                   onClick={() => handleReusePrompt(selectedImage.prompt)}
-                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white text-black hover:bg-gray-100 rounded-lg font-medium transition"
+                  className="flex items-center justify-center gap-2 px-4 py-2.5 bg-gray-900 text-white hover:bg-gray-800 dark:bg-white dark:text-black dark:hover:bg-gray-100 rounded-lg font-medium transition"
                  >
                    <RefreshCw className="h-4 w-4" />
                    <span>使用此提示词</span>
