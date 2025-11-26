@@ -1,13 +1,15 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, Suspense } from 'react';
 import { useAppStore } from '../store/useAppStore';
-import { MessageBubble } from './MessageBubble';
 import { InputArea } from './InputArea';
 import { ErrorBoundary } from './ErrorBoundary';
-import { ThinkingIndicator } from './ThinkingIndicator';
 import { streamGeminiResponse, generateContent } from '../services/geminiService';
 import { convertMessagesToHistory } from '../utils/messageUtils';
 import { ChatMessage, Attachment, Part } from '../types';
 import { Sparkles } from 'lucide-react';
+
+// Lazy load components
+const ThinkingIndicator = React.lazy(() => import('./ThinkingIndicator').then(m => ({ default: m.ThinkingIndicator })));
+const MessageBubble = React.lazy(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })));
 
 export const ChatInterface: React.FC = () => {
   const {
@@ -279,22 +281,26 @@ export const ChatInterface: React.FC = () => {
 
         {messages.map((msg, index) => (
           <ErrorBoundary key={msg.id}>
-            <MessageBubble 
-              message={msg} 
-              isLast={index === messages.length - 1}
-              isGenerating={isLoading}
-              onDelete={handleDelete}
-              onRegenerate={handleRegenerate}
-            />
+            <Suspense fallback={<div className="h-12 w-full animate-pulse bg-gray-100 dark:bg-gray-800 rounded-lg mb-4"></div>}>
+              <MessageBubble 
+                message={msg} 
+                isLast={index === messages.length - 1}
+                isGenerating={isLoading}
+                onDelete={handleDelete}
+                onRegenerate={handleRegenerate}
+              />
+            </Suspense>
           </ErrorBoundary>
         ))}
 
         {showArcade && (
-            <ThinkingIndicator 
-                isThinking={isLoading} 
-                onClose={handleCloseArcade}
-                isExiting={isExiting}
-            />
+            <React.Suspense fallback={null}>
+                <ThinkingIndicator 
+                    isThinking={isLoading} 
+                    onClose={handleCloseArcade}
+                    isExiting={isExiting}
+                />
+            </React.Suspense>
         )}
       </div>
 

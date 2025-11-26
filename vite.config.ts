@@ -24,6 +24,16 @@ export default defineConfig(({ mode }) => {
           'react-dom': 'preact/compat',     // Must be below test-utils
           'react/jsx-runtime': 'preact/jsx-runtime'
         }
+      },
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              'google-genai': ['@google/genai'],
+              'markdown-libs': ['react-markdown', 'remark-gfm']
+            }
+          }
+        }
       }
     };
 });

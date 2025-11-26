@@ -1,10 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { Sparkles, Gamepad2, BrainCircuit, X, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
-import { SnakeGame } from './games/SnakeGame';
-import { DinoGame } from './games/DinoGame';
-import { LifeGame } from './games/LifeGame';
-import { Puzzle2048 } from './games/Puzzle2048';
+
+// Lazy load games
+const SnakeGame = lazy(() => import('./games/SnakeGame').then(m => ({ default: m.SnakeGame })));
+const DinoGame = lazy(() => import('./games/DinoGame').then(m => ({ default: m.DinoGame })));
+const LifeGame = lazy(() => import('./games/LifeGame').then(m => ({ default: m.LifeGame })));
+const Puzzle2048 = lazy(() => import('./games/Puzzle2048').then(m => ({ default: m.Puzzle2048 })));
 
 interface Props {
     onClose?: () => void;
@@ -143,7 +145,9 @@ export const ThinkingIndicator: React.FC<Props> = ({ onClose, isThinking = true,
           <div className={`w-full p-4 flex flex-col items-center justify-center min-h-80 transition-colors duration-300 ${
               isDark ? 'bg-gray-950' : 'bg-gray-100'
           }`}>
-              {renderGame()}
+              <Suspense fallback={<div className="text-sm text-gray-500">Loading Game...</div>}>
+                  {renderGame()}
+              </Suspense>
           </div>
           
           {/* Footer */}
