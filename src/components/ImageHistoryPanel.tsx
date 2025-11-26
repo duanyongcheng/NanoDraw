@@ -160,9 +160,9 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
       />
 
       {/* Panel */}
-      <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white dark:bg-gray-900 shadow-2xl z-50 flex flex-col transition-transform duration-300">
+      <div className="fixed inset-y-0 right-0 w-full sm:w-96 bg-white dark:bg-gray-950 shadow-2xl z-50 flex flex-col transition-transform duration-300">
         {/* Header */}
-        <div className="flex flex-col border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 z-10">
+        <div className="flex flex-col border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 z-10">
           <div className="flex items-center justify-between p-4 pb-2">
             <div className="flex items-center gap-2">
               <ImageIcon className="h-5 w-5 text-blue-600 dark:text-blue-400" />

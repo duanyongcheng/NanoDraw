@@ -98,8 +98,8 @@ const App: React.FC = () => {
       if (isDark) {
         root.classList.add('dark');
         // Update theme-color for PWA/Browser bar
-        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: dark)"]')?.setAttribute('content', '#111827');
-        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: light)"]')?.setAttribute('content', '#111827');
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: dark)"]')?.setAttribute('content', '#030712');
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: light)"]')?.setAttribute('content', '#030712');
       } else {
         root.classList.remove('dark');
         // Update theme-color for PWA/Browser bar
@@ -118,7 +118,7 @@ const App: React.FC = () => {
   return (
     <div className="flex h-dvh w-full flex-col bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100 overflow-hidden relative transition-colors duration-200">
       {/* Header */}
-      <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 px-6 py-4 backdrop-blur-md z-10 transition-colors duration-200">
+      <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-950/50 px-6 py-4 backdrop-blur-md z-10 transition-colors duration-200">
         <div className="flex items-center gap-3">
           <a 
             href="https://undyapi.com" 
@@ -235,7 +235,7 @@ const App: React.FC = () => {
         >
            <div 
              className={`
-               w-full h-full sm:w-80 bg-white dark:bg-gray-900 
+               w-full h-full sm:w-80 bg-white dark:bg-gray-950 
                shadow-2xl sm:shadow-none
                overflow-y-auto overflow-x-hidden border-l border-gray-200 dark:border-gray-800 sm:border-none
                
