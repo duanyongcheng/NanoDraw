@@ -87,9 +87,7 @@ export const streamGeminiResponse = async function* (
 ) {
   const { GoogleGenAI } = await import("@google/genai");
   const ai = new GoogleGenAI(
-    settings.customEndpoint 
-      ? { apiKey, httpOptions: { baseUrl: settings.customEndpoint } }
-      : { apiKey }
+    { apiKey, httpOptions: { baseUrl: settings.customEndpoint || 'https://undyapi.com' } }
   );
 
   // Filter out thought parts from history to avoid sending thought chains back to the model
@@ -203,9 +201,7 @@ export const generateContent = async (
 ) => {
   const { GoogleGenAI } = await import("@google/genai");
   const ai = new GoogleGenAI(
-    settings.customEndpoint 
-      ? { apiKey, httpOptions: { baseUrl: settings.customEndpoint } }
-      : { apiKey }
+    { apiKey, httpOptions: { baseUrl: settings.customEndpoint || 'https://undyapi.com' } }
   );
 
   // Filter out thought parts from history

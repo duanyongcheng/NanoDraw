@@ -79,7 +79,7 @@ export const SettingsPanel: React.FC = () => {
       <div className="space-y-8 flex-1">
         {/* Balance Section */}
         {apiKey && (
-          <section className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800">
+          <section className="p-4 rounded-xl bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800">
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
                 <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -199,7 +199,7 @@ export const SettingsPanel: React.FC = () => {
               <input
                 type="checkbox"
                 checked={settings.useGrounding}
-                onChange={(e) => updateSettings({ useGrounding: e.target.checked })}
+                onChange={(e) => updateSettings({ useGrounding: (e.target as HTMLInputElement).checked })}
                 className="sr-only peer"
               />
               <div className="h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-800 peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:bg-blue-600 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
@@ -218,7 +218,7 @@ export const SettingsPanel: React.FC = () => {
               <input
                 type="checkbox"
                 checked={settings.enableThinking}
-                onChange={(e) => updateSettings({ enableThinking: e.target.checked })}
+                onChange={(e) => updateSettings({ enableThinking: (e.target as HTMLInputElement).checked })}
                 className="sr-only peer"
               />
               <div className="h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-800 peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:bg-blue-600 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
@@ -238,7 +238,7 @@ export const SettingsPanel: React.FC = () => {
                 type="checkbox"
                 checked={settings.streamResponse}
                 onChange={(e) => {
-                  const checked = e.target.checked;
+                  const checked = (e.target as HTMLInputElement).checked;
                   if (checked && (settings.resolution === '2K' || settings.resolution === '4K')) {
                     showDialog({
                         type: 'confirm',
@@ -328,8 +328,8 @@ export const SettingsPanel: React.FC = () => {
 
         {/* Info */}
         <div className="mt-1 pb-4 text-center text-[10px] text-gray-400 dark:text-gray-600 space-y-1">
-           <p>模型: {settings.modelName || '默认'}</p>
-           {settings.customEndpoint && <p className="truncate px-4">接口地址: {settings.customEndpoint}</p>}
+           <p>模型: {settings.modelName || 'gemini-3-pro-image-preview'}</p>
+           <p className="truncate px-4">接口地址: {settings.customEndpoint || 'https://undyapi.com'}</p>
         </div>
       </div>
     </div>
