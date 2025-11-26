@@ -1,0 +1,81 @@
+import { AppSettings } from '../types';
+
+export interface BalanceInfo {
+  hardLimitUsd: number;
+  usage: number;
+  remaining: number;
+  isUnlimited: boolean;
+}
+
+/**
+ * 查询 API Key 的余额信息
+ * 适用于 OpenAI 兼容的 API endpoint
+ */
+export const fetchBalance = async (
+  apiKey: string,
+  settings: AppSettings
+): Promise<BalanceInfo> => {
+  const baseUrl = settings.customEndpoint || 'https://undyapi.com';
+
+  try {
+    // 1. 查询订阅信息(总额度)
+    const subscriptionRes = await fetch(`${baseUrl}/v1/dashboard/billing/subscription`, {
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+      },
+    });
+
+    if (!subscriptionRes.ok) {
+      throw new Error(`订阅查询失败: ${subscriptionRes.status} ${subscriptionRes.statusText}`);
+    }
+
+    const subscriptionData = await subscriptionRes.json();
+    const hardLimitUsd = subscriptionData.hard_limit_usd || 0;
+
+    // 2. 查询使用情况(近100天)
+    const now = new Date();
+    const startDate = new Date(now.getTime() - 100 * 24 * 3600 * 1000);
+    const startDateStr = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
+    const endDateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+
+    const usageRes = await fetch(
+      `${baseUrl}/v1/dashboard/billing/usage?start_date=${startDateStr}&end_date=${endDateStr}`,
+      {
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+        },
+      }
+    );
+
+    if (!usageRes.ok) {
+      throw new Error(`使用量查询失败: ${usageRes.status} ${usageRes.statusText}`);
+    }
+
+    const usageData = await usageRes.json();
+    const totalUsage = (usageData.total_usage || 0) / 100; // 转换为美元
+
+    // 3. 计算剩余额度
+    const isUnlimited = hardLimitUsd >= 100000000;
+    const remaining = isUnlimited ? Infinity : hardLimitUsd - totalUsage;
+
+    return {
+      hardLimitUsd: isUnlimited ? Infinity : hardLimitUsd,
+      usage: isUnlimited ? 0 : totalUsage,
+      remaining,
+      isUnlimited,
+    };
+  } catch (error) {
+    console.error('余额查询失败:', error);
+    throw error;
+  }
+};
+
+/**
+ * 格式化金额显示
+ */
+export const formatBalance = (amount: number, isUnlimited: boolean): string => {
+  if (isUnlimited || amount === Infinity) {
+    return '无限';
+  }
+  return `$${amount.toFixed(3)}`;
+};

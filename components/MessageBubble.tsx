@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChatMessage, Part } from '../types';
-import { User, Sparkles, ChevronDown, ChevronRight, BrainCircuit, Trash2, RotateCcw } from 'lucide-react';
+import { User, Sparkles, ChevronDown, ChevronRight, BrainCircuit, Trash2, RotateCcw, Download } from 'lucide-react';
 import { useUiStore } from '../store/useUiStore';
 
 interface Props {
@@ -26,11 +26,34 @@ const openImageInNewTab = (mimeType: string, base64Data: string) => {
   setTimeout(() => URL.revokeObjectURL(url), 60000);
 };
 
-const renderThinkingContent = (part: Part, index: number) => {
+const downloadImage = (mimeType: string, base64Data: string) => {
+  const byteCharacters = atob(base64Data);
+  const byteNumbers = new Array(byteCharacters.length);
+  for (let i = 0; i < byteCharacters.length; i++) {
+      byteNumbers[i] = byteCharacters.charCodeAt(i);
+  }
+  const byteArray = new Uint8Array(byteNumbers);
+  const blob = new Blob([byteArray], { type: mimeType });
+  const url = URL.createObjectURL(blob);
+
+  const link = document.createElement('a');
+  link.href = url;
+  const extension = mimeType.split('/')[1] || 'png';
+  link.download = `gemini-image-${Date.now()}.${extension}`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+};
+
+const ThinkingContentItem: React.FC<{ part: Part }> = ({ part }) => {
+  const [isImageHovered, setIsImageHovered] = useState(false);
+
   if (part.text) {
     return (
-      <div key={index} className="mb-2 last:mb-0">
-        <ReactMarkdown 
+      <div className="mb-2 last:mb-0">
+        <ReactMarkdown
           remarkPlugins={[remarkGfm]}
           components={{
             p: ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
@@ -43,24 +66,79 @@ const renderThinkingContent = (part: Part, index: number) => {
       </div>
     );
   }
+
   if (part.inlineData) {
      return (
-        <div 
-            key={index} 
-            className="my-2 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700/50 bg-gray-100 dark:bg-black/20 max-w-sm mx-auto cursor-pointer hover:ring-2 hover:ring-blue-500/50 transition"
-            onClick={() => openImageInNewTab(part.inlineData!.mimeType, part.inlineData!.data)}
-            title="Click to open full size"
+        <div
+            className="relative my-2 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700/50 bg-gray-100 dark:bg-black/20 max-w-sm mx-auto group"
+            onMouseEnter={() => setIsImageHovered(true)}
+            onMouseLeave={() => setIsImageHovered(false)}
         >
           <img
             src={`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`}
             alt="Thinking process sketch"
-            className="h-auto max-w-full object-contain opacity-80 hover:opacity-100 transition"
+            className="h-auto max-w-full object-contain opacity-80 hover:opacity-100 transition cursor-pointer"
             loading="lazy"
+            onClick={() => openImageInNewTab(part.inlineData!.mimeType, part.inlineData!.data)}
+            title="点击查看大图"
           />
+
+          {/* Download Button */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              downloadImage(part.inlineData!.mimeType, part.inlineData!.data);
+            }}
+            className={`absolute top-2 right-2 p-2 rounded-lg bg-black/60 hover:bg-black/80 text-white shadow-lg backdrop-blur-sm transition-all ${
+              isImageHovered ? 'opacity-100' : 'opacity-0'
+            }`}
+            title="下载图片"
+          >
+            <Download className="h-4 w-4" />
+          </button>
         </div>
       );
   }
+
   return null;
+};
+
+const ImageWithDownload: React.FC<{ part: Part; index: number }> = ({ part, index }) => {
+  const [isImageHovered, setIsImageHovered] = useState(false);
+
+  if (!part.inlineData) return null;
+
+  return (
+    <div
+      key={index}
+      className="relative mt-3 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-950/50 max-w-lg mx-auto group"
+      onMouseEnter={() => setIsImageHovered(true)}
+      onMouseLeave={() => setIsImageHovered(false)}
+    >
+      <img
+        src={`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`}
+        alt="Generated or uploaded content"
+        className="h-auto max-w-full object-contain cursor-pointer"
+        loading="lazy"
+        onClick={() => openImageInNewTab(part.inlineData!.mimeType, part.inlineData!.data)}
+        title="点击查看大图"
+      />
+
+      {/* Download Button */}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          downloadImage(part.inlineData!.mimeType, part.inlineData!.data);
+        }}
+        className={`absolute top-3 right-3 p-2.5 rounded-lg bg-black/60 hover:bg-black/80 text-white shadow-lg backdrop-blur-sm transition-all ${
+          isImageHovered ? 'opacity-100' : 'opacity-0'
+        }`}
+        title="下载图片"
+      >
+        <Download className="h-5 w-5" />
+      </button>
+    </div>
+  );
 };
 
 const ThinkingBlock: React.FC<{ parts: Part[], duration?: number }> = ({ parts, duration }) => {
@@ -82,7 +160,7 @@ const ThinkingBlock: React.FC<{ parts: Part[], duration?: number }> = ({ parts, 
       
       {isExpanded && (
         <div className="border-t border-gray-200 dark:border-gray-700/30 px-3 py-3 text-sm text-gray-600 dark:text-gray-400 italic">
-          {parts.map((part, i) => renderThinkingContent(part, i))}
+          {parts.map((part, i) => <ThinkingContentItem key={i} part={part} />)}
         </div>
       )}
     </div>
@@ -187,21 +265,7 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
     
     // 3. Handle Images
     if (part.inlineData) {
-      return (
-        <div 
-            key={index} 
-            className="mt-3 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-950/50 max-w-lg mx-auto cursor-pointer hover:ring-2 hover:ring-blue-500/50 transition"
-            onClick={() => openImageInNewTab(part.inlineData!.mimeType, part.inlineData!.data)}
-            title="Click to open full size"
-        >
-          <img
-            src={`data:${part.inlineData.mimeType};base64,${part.inlineData.data}`}
-            alt="Generated or uploaded content"
-            className="h-auto max-w-full object-contain"
-            loading="lazy"
-          />
-        </div>
-      );
+      return <ImageWithDownload key={index} part={part} index={index} />;
     }
     return null;
   };
