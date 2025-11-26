@@ -20,23 +20,27 @@ export interface DialogOptions {
 interface UiState {
   toasts: Toast[];
   dialog: DialogOptions | null;
-  
+  isPromptLibraryOpen: boolean;
+
   addToast: (message: string, type?: ToastType) => void;
   removeToast: (id: string) => void;
   showDialog: (options: DialogOptions) => void;
   closeDialog: () => void;
+  togglePromptLibrary: () => void;
+  closePromptLibrary: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
   toasts: [],
   dialog: null,
+  isPromptLibraryOpen: false,
 
   addToast: (message, type = 'info') => {
     const id = Date.now().toString();
     set((state) => ({
       toasts: [...state.toasts, { id, message, type }]
     }));
-    
+
     // Auto remove after 3 seconds
     setTimeout(() => {
       set((state) => ({
@@ -51,6 +55,11 @@ export const useUiStore = create<UiState>((set) => ({
     })),
 
   showDialog: (options) => set({ dialog: options }),
-  
+
   closeDialog: () => set({ dialog: null }),
+
+  togglePromptLibrary: () =>
+    set((state) => ({ isPromptLibraryOpen: !state.isPromptLibraryOpen })),
+
+  closePromptLibrary: () => set({ isPromptLibraryOpen: false }),
 }));
