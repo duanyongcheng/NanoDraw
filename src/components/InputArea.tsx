@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Send, ImagePlus, X, Square, Gamepad2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
 import { Attachment } from '../types';
@@ -37,7 +37,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
     }
   };
 
-  const processFiles = async (files: File[]) => {
+  const processFiles = useCallback(async (files: File[]) => {
     const newAttachments: Attachment[] = [];
 
     for (const file of files) {
@@ -60,7 +60,29 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
     }
 
     setAttachments(prev => [...prev, ...newAttachments].slice(0, 14));
-  };
+  }, []);
+
+  useEffect(() => {
+    const handlePaste = (event: ClipboardEvent) => {
+      if (disabled) return;
+
+      const clipboardData = event.clipboardData;
+      if (!clipboardData) return;
+
+      const imageFiles = Array.from(clipboardData.items)
+        .filter(item => item.kind === 'file' && item.type.startsWith('image/'))
+        .map(item => item.getAsFile())
+        .filter((file): file is File => !!file);
+
+      if (imageFiles.length === 0) return;
+
+      event.preventDefault();
+      processFiles(imageFiles);
+    };
+
+    window.addEventListener('paste', handlePaste);
+    return () => window.removeEventListener('paste', handlePaste);
+  }, [disabled, processFiles]);
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -223,7 +245,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
         </div>
         <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
            <span className="hidden sm:inline">
-             回车发送,Shift + 回车换行。支持拖拽或点击上传最多 14 张参考图片。
+             回车发送,Shift + 回车换行。支持粘贴、拖拽或点击上传最多 14 张参考图片。
            </span>
            <span className="sm:hidden">
              点击发送按钮生成图片。支持上传最多 14 张参考图片。
