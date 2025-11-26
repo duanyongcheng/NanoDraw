@@ -2,6 +2,7 @@ import { PromptItem } from '../types';
 
 const GITHUB_PROMPT_URL = 'https://raw.githubusercontent.com/glidea/banana-prompt-quicker/main/prompts.json';
 const API_PROMPT_URL = '/api/prompts';
+const API_IMAGE_PROXY_URL = '/api/image-proxy';
 const CACHE_KEY = 'prompt_library_cache';
 const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24小时
 
@@ -153,4 +154,20 @@ export function clearPromptsCache(): void {
   } catch (error) {
     console.error('Failed to clear cache:', error);
   }
+}
+
+/**
+ * 获取代理后的图片 URL
+ * 在生产环境使用 Vercel Edge Function 代理图片以加速加载
+ */
+export function getProxiedImageUrl(originalUrl: string): string {
+  if (!originalUrl) return '';
+  
+  // 如果已经是完整 URL 且不是开发环境(或者是为了测试)，则走代理
+  // 这里简单的判断：如果 URL 以 http 开头，就尝试走代理
+  if (originalUrl.startsWith('http')) {
+    return `${API_IMAGE_PROXY_URL}?url=${encodeURIComponent(originalUrl)}`;
+  }
+  
+  return originalUrl;
 }

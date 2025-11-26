@@ -3,7 +3,7 @@ import { X, RefreshCw, Sparkles, ExternalLink, Loader2 } from 'lucide-react';
 import { useUiStore } from '../store/useUiStore';
 import { useAppStore } from '../store/useAppStore';
 import { PromptItem } from '../types';
-import { fetchPrompts, getCategories } from '../services/promptService';
+import { fetchPrompts, getCategories, getProxiedImageUrl } from '../services/promptService';
 
 interface PromptLibraryPanelProps {
   onSelectPrompt?: (prompt: string) => void;
@@ -83,7 +83,7 @@ export const PromptLibraryPanel: React.FC<PromptLibraryPanelProps> = ({ onSelect
       <div className="fixed right-0 top-0 z-50 h-full w-full sm:w-[600px] bg-white dark:bg-gray-900 shadow-2xl transform transition-transform duration-300 ease-out overflow-hidden flex flex-col">
 
         {/* 头部 */}
-        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-linear-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 px-6 py-4">
           <div className="flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-purple-600 dark:text-purple-400" />
             <h2 className="text-xl font-bold text-gray-900 dark:text-white">提示词库</h2>
@@ -202,7 +202,7 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onSelect }) => {
               </div>
             )}
             <img
-              src={prompt.preview}
+              src={getProxiedImageUrl(prompt.preview)}
               alt={prompt.title}
               loading="lazy"
               onLoad={() => setImageLoaded(true)}

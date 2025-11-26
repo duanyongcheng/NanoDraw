@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Sparkles, X, ExternalLink } from 'lucide-react';
 import { PromptItem } from '../types';
-import { fetchPrompts, getCategories } from '../services/promptService';
+import { fetchPrompts, getCategories, getProxiedImageUrl } from '../services/promptService';
 
 interface PromptQuickPickerProps {
   isOpen: boolean;
@@ -99,7 +99,7 @@ export const PromptQuickPicker: React.FC<PromptQuickPickerProps> = ({
   };
 
   // 键盘导航
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLElement>) => {
     switch (e.key) {
       case 'ArrowDown':
         e.preventDefault();
@@ -147,13 +147,13 @@ export const PromptQuickPicker: React.FC<PromptQuickPickerProps> = ({
         <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xl overflow-hidden">
 
           {/* 搜索框 */}
-          <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 px-4 py-3 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
+          <div className="flex items-center gap-2 border-b border-gray-200 dark:border-gray-700 px-4 py-3 bg-linear-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
             <Search className="h-5 w-5 text-purple-600 dark:text-purple-400 shrink-0" />
             <input
               ref={searchInputRef}
               type="text"
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => setSearch(e.currentTarget.value)}
               onKeyDown={handleKeyDown}
               placeholder="搜索提示词..."
               className="flex-1 bg-transparent text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none text-sm"
@@ -309,7 +309,7 @@ const PromptDetailPreview: React.FC<PromptDetailPreviewProps> = ({ prompt }) => 
               </div>
             )}
             <img
-              src={prompt.preview}
+              src={getProxiedImageUrl(prompt.preview)}
               alt={prompt.title}
               loading="lazy"
               onLoad={() => setImageLoaded(true)}
