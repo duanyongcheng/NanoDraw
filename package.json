@@ -4,9 +4,13 @@
   "version": "0.1.0",
   "type": "module",
   "scripts": {
+    "preinstall": "npx only-allow bun",
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview"
+  },
+  "engines": {
+    "bun": ">=1.2.1"
   },
   "dependencies": {
     "@google/genai": "^1.30.0",
