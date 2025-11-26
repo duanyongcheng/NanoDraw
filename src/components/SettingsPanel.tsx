@@ -1,13 +1,48 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
-import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw } from 'lucide-react';
+import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw, Download } from 'lucide-react';
 import { formatBalance } from '../services/balanceService';
 
 export const SettingsPanel: React.FC = () => {
   const { apiKey, settings, updateSettings, toggleSettings, removeApiKey, clearHistory, isSettingsOpen, fetchBalance, balance } = useAppStore();
   const { addToast, showDialog } = useUiStore();
   const [loadingBalance, setLoadingBalance] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState<any>(null);
+
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e: Event) => {
+      // Prevent the mini-infobar from appearing on mobile
+      e.preventDefault();
+      // Stash the event so it can be triggered later.
+      setInstallPrompt(e);
+    };
+
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    };
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (!installPrompt) return;
+    
+    // Show the install prompt
+    installPrompt.prompt();
+    
+    // Wait for the user to respond to the prompt
+    const { outcome } = await installPrompt.userChoice;
+    
+    if (outcome === 'accepted') {
+      console.log('User accepted the install prompt');
+    } else {
+      console.log('User dismissed the install prompt');
+    }
+    
+    // We've used the prompt, and can't use it again, throw it away
+    setInstallPrompt(null);
+  };
   
   // 首次加载或打开面板时如果没有余额数据，尝试获取
   useEffect(() => {
@@ -258,6 +293,22 @@ export const SettingsPanel: React.FC = () => {
           </p>
         </section>
         
+        {/* App Installation */}
+        {installPrompt && (
+          <section className="pt-4 border-t border-gray-200 dark:border-gray-800 mb-4">
+            <button
+              onClick={handleInstallClick}
+              className="w-full flex items-center justify-center gap-2 rounded-lg border border-purple-200 dark:border-purple-500/30 bg-purple-50 dark:bg-purple-500/10 p-3 text-purple-600 dark:text-purple-400 hover:bg-purple-100 dark:hover:bg-purple-500/20 transition"
+            >
+              <Download className="h-4 w-4" />
+              <span>安装 UndyDraw 应用</span>
+            </button>
+            <p className="mt-2 text-xs text-center text-gray-400 dark:text-gray-500">
+              安装到您的设备以获得原生应用体验。
+            </p>
+          </section>
+        )}
+
         {/* Share Configuration */}
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800 mb-4">
            <div className="flex gap-2 mb-2">
