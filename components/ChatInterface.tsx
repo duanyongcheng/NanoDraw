@@ -10,13 +10,14 @@ import { ChatMessage, Attachment, Part } from '../types';
 import { Sparkles } from 'lucide-react';
 
 export const ChatInterface: React.FC = () => {
-  const { 
-    apiKey, 
-    messages, 
-    settings, 
-    addMessage, 
+  const {
+    apiKey,
+    messages,
+    settings,
+    addMessage,
     updateLastMessage,
-    isLoading, 
+    addImageToHistory,
+    isLoading,
     setLoading,
     deleteMessage,
     sliceMessages
@@ -165,6 +166,24 @@ export const ChatInterface: React.FC = () => {
           
           const hasThought = result.modelParts.some(p => p.thought);
           updateLastMessage(result.modelParts, false, hasThought ? totalDuration : undefined);
+      }
+
+      // 收集生成的图片到历史记录
+      const finalMessage = useAppStore.getState().messages.slice(-1)[0];
+      if (finalMessage && finalMessage.role === 'model') {
+        const imageParts = finalMessage.parts.filter(p => p.inlineData && !p.thought);
+        imageParts.forEach(part => {
+          if (part.inlineData) {
+            addImageToHistory({
+              id: `img-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+              mimeType: part.inlineData.mimeType,
+              base64Data: part.inlineData.data,
+              prompt: text || '图片生成',
+              timestamp: Date.now(),
+              modelName: settings.modelName,
+            });
+          }
+        });
       }
 
     } catch (error: any) {

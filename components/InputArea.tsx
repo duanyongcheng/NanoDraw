@@ -13,8 +13,10 @@ interface Props {
 export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArcadeOpen, disabled }) => {
   const [text, setText] = useState('');
   const [attachments, setAttachments] = useState<Attachment[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const dragCounter = useRef(0);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -25,33 +27,75 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      const files: File[] = Array.from(e.target.files);
-      
-      const newAttachments: Attachment[] = [];
-      
-      for (const file of files) {
-        if (file.type.startsWith('image/')) {
-          try {
-             const base64 = await fileToBase64(file);
-             // Strip the data:image/jpeg;base64, part for the API payload
-             const base64Data = base64.split(',')[1];
-             
-             newAttachments.push({
-               file,
-               preview: base64,
-               base64Data,
-               mimeType: file.type
-             });
-          } catch (err) {
-             console.error("Error reading file", err);
-          }
-        }
-      }
-      
-      setAttachments(prev => [...prev, ...newAttachments]);
+      await processFiles(Array.from(e.target.files));
       // Reset input
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
+  };
+
+  const processFiles = async (files: File[]) => {
+    const newAttachments: Attachment[] = [];
+
+    for (const file of files) {
+      if (file.type.startsWith('image/')) {
+        try {
+           const base64 = await fileToBase64(file);
+           // Strip the data:image/jpeg;base64, part for the API payload
+           const base64Data = base64.split(',')[1];
+
+           newAttachments.push({
+             file,
+             preview: base64,
+             base64Data,
+             mimeType: file.type
+           });
+        } catch (err) {
+           console.error("Error reading file", err);
+        }
+      }
+    }
+
+    setAttachments(prev => [...prev, ...newAttachments].slice(0, 14));
+  };
+
+  const handleDragEnter = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    dragCounter.current++;
+
+    if (e.dataTransfer.items && e.dataTransfer.items.length > 0) {
+      setIsDragging(true);
+    }
+  };
+
+  const handleDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    dragCounter.current--;
+
+    if (dragCounter.current === 0) {
+      setIsDragging(false);
+    }
+  };
+
+  const handleDragOver = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+  };
+
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsDragging(false);
+    dragCounter.current = 0;
+
+    if (disabled || attachments.length >= 14) return;
+
+    const files = Array.from(e.dataTransfer.files);
+    await processFiles(files);
   };
 
   const removeAttachment = (index: number) => {
@@ -69,16 +113,16 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
   return (
     <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 pb-safe transition-colors duration-200">
       <div className="mx-auto max-w-4xl">
-        
+
         {/* Preview Area */}
         {attachments.length > 0 && (
           <div className="flex gap-3 overflow-x-auto pb-3 mb-2">
             {attachments.map((att, i) => (
               <div key={i} className="relative h-20 w-20 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 group">
-                <img 
-                  src={att.preview} 
-                  alt="preview" 
-                  className="h-full w-full object-cover rounded-lg opacity-80 group-hover:opacity-100 transition" 
+                <img
+                  src={att.preview}
+                  alt="preview"
+                  className="h-full w-full object-cover rounded-lg opacity-80 group-hover:opacity-100 transition"
                 />
                 <button
                   onClick={() => removeAttachment(i)}
@@ -91,8 +135,27 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
           </div>
         )}
 
-        <div className="relative flex items-end gap-1 rounded-2xl bg-gray-50 dark:bg-gray-800 p-2 shadow-inner ring-1 ring-gray-200 dark:ring-gray-700/50 focus-within:ring-2 focus-within:ring-blue-500/50 transition-all duration-200">
-          
+        <div
+          className={`relative flex items-end gap-1 rounded-2xl bg-gray-50 dark:bg-gray-800 p-2 shadow-inner ring-1 transition-all duration-200 ${
+            isDragging
+              ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20'
+              : 'ring-gray-200 dark:ring-gray-700/50 focus-within:ring-2 focus-within:ring-blue-500/50'
+          }`}
+          onDragEnter={handleDragEnter}
+          onDragLeave={handleDragLeave}
+          onDragOver={handleDragOver}
+          onDrop={handleDrop}
+        >
+
+          {/* Drag Overlay */}
+          {isDragging && (
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-blue-500/10 backdrop-blur-sm border-2 border-dashed border-blue-500">
+              <div className="flex flex-col items-center gap-2 text-blue-600 dark:text-blue-400">
+                <ImagePlus className="h-8 w-8" />
+                <span className="text-sm font-medium">松开鼠标以上传图片</span>
+              </div>
+            </div>
+          )}
           <input
             type="file"
             multiple
@@ -155,7 +218,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
           )}
         </div>
         <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
-           回车发送，Shift + 回车换行。支持最多 14 张参考图片。
+           回车发送,Shift + 回车换行。支持拖拽或点击上传最多 14 张参考图片。
         </div>
       </div>
     </div>

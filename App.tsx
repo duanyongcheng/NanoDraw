@@ -3,13 +3,15 @@ import { useAppStore } from './store/useAppStore';
 import { ApiKeyModal } from './components/ApiKeyModal';
 import { ChatInterface } from './components/ChatInterface';
 import { SettingsPanel } from './components/SettingsPanel';
+import { ImageHistoryPanel } from './components/ImageHistoryPanel';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { GlobalDialog } from './components/ui/GlobalDialog';
-import { Settings, MessageSquare, AlertCircle, Sun, Moon, Monitor, Github } from 'lucide-react';
+import { Settings, Sun, Moon, Github, ImageIcon } from 'lucide-react';
 
 const App: React.FC = () => {
-  const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings } = useAppStore();
+  const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory } = useAppStore();
   const [mounted, setMounted] = useState(false);
+  const [isImageHistoryOpen, setIsImageHistoryOpen] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -78,6 +80,19 @@ const App: React.FC = () => {
             >
               <Github className="h-6 w-6 animate-heartbeat-mixed group-hover:animate-none" />
             </a>
+            <button
+              onClick={() => setIsImageHistoryOpen(true)}
+              className="relative rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              title="图片历史"
+            >
+              <ImageIcon className="h-6 w-6" />
+              {imageHistory.length > 0 && (
+                <span className="absolute top-1 right-1 flex h-2 w-2">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                </span>
+              )}
+            </button>
             <button
               onClick={() => updateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })}
               className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -148,6 +163,7 @@ const App: React.FC = () => {
 
       {/* Modals */}
       {!apiKey && <ApiKeyModal />}
+      <ImageHistoryPanel isOpen={isImageHistoryOpen} onClose={() => setIsImageHistoryOpen(false)} />
       <ToastContainer />
       <GlobalDialog />
     </div>

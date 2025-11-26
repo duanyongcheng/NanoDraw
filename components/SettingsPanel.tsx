@@ -1,11 +1,41 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
-import { X, LogOut, Trash2, Sun, Moon, Monitor, Share2, Bookmark } from 'lucide-react';
+import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw } from 'lucide-react';
+import { fetchBalance, formatBalance, BalanceInfo } from '../services/balanceService';
 
 export const SettingsPanel: React.FC = () => {
   const { apiKey, settings, updateSettings, toggleSettings, removeApiKey, clearHistory } = useAppStore();
   const { addToast, showDialog } = useUiStore();
+  const [balance, setBalance] = useState<BalanceInfo | null>(null);
+  const [loadingBalance, setLoadingBalance] = useState(false);
+
+  const handleFetchBalance = async () => {
+    if (!apiKey) {
+      addToast("请先输入 API Key", 'error');
+      return;
+    }
+
+    setLoadingBalance(true);
+    try {
+      const balanceInfo = await fetchBalance(apiKey, settings);
+      setBalance(balanceInfo);
+      addToast("余额查询成功", 'success');
+    } catch (error: any) {
+      console.error('余额查询失败:', error);
+      addToast(`余额查询失败: ${error.message}`, 'error');
+      setBalance(null);
+    } finally {
+      setLoadingBalance(false);
+    }
+  };
+
+  // 自动查询余额(仅首次打开设置面板时)
+  useEffect(() => {
+    if (apiKey && !balance && !loadingBalance) {
+      handleFetchBalance();
+    }
+  }, [apiKey]);
 
   const getBookmarkUrl = () => {
     if (!apiKey) return window.location.href;
@@ -47,6 +77,57 @@ export const SettingsPanel: React.FC = () => {
       </div>
 
       <div className="space-y-8 flex-1">
+        {/* Balance Section */}
+        {apiKey && (
+          <section className="p-4 rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <DollarSign className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                <h3 className="text-sm font-semibold text-gray-900 dark:text-white">API 余额</h3>
+              </div>
+              <button
+                onClick={handleFetchBalance}
+                disabled={loadingBalance}
+                className="p-1.5 rounded-lg hover:bg-blue-100 dark:hover:bg-blue-800/30 text-blue-600 dark:text-blue-400 disabled:opacity-50 transition"
+                title="刷新余额"
+              >
+                <RefreshCw className={`h-4 w-4 ${loadingBalance ? 'animate-spin' : ''}`} />
+              </button>
+            </div>
+
+            {loadingBalance && !balance ? (
+              <div className="text-sm text-gray-500 dark:text-gray-400 text-center py-3">
+                查询中...
+              </div>
+            ) : balance ? (
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-white/50 dark:bg-gray-900/30 rounded-lg p-2.5 text-center">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">总额度</div>
+                  <div className="text-sm font-bold text-gray-900 dark:text-white">
+                    {formatBalance(balance.hardLimitUsd, balance.isUnlimited)}
+                  </div>
+                </div>
+                <div className="bg-white/50 dark:bg-gray-900/30 rounded-lg p-2.5 text-center">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">已使用</div>
+                  <div className="text-sm font-bold text-orange-600 dark:text-orange-400">
+                    {formatBalance(balance.usage, balance.isUnlimited)}
+                  </div>
+                </div>
+                <div className="bg-white/50 dark:bg-gray-900/30 rounded-lg p-2.5 text-center">
+                  <div className="text-xs text-gray-500 dark:text-gray-400 mb-1">剩余</div>
+                  <div className="text-sm font-bold text-green-600 dark:text-green-400">
+                    {formatBalance(balance.remaining, balance.isUnlimited)}
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <div className="text-xs text-gray-500 dark:text-gray-400 text-center py-2">
+                点击刷新按钮查询余额
+              </div>
+            )}
+          </section>
+        )}
+
         {/* Resolution */}
         <section className='mb-4'>
           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">图像分辨率</label>

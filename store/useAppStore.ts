@@ -1,11 +1,12 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AppSettings, ChatMessage, Content, Part } from '../types';
+import { AppSettings, ChatMessage, Part, ImageHistoryItem } from '../types';
 
 interface AppState {
   apiKey: string | null;
   settings: AppSettings;
   messages: ChatMessage[]; // Single Source of Truth
+  imageHistory: ImageHistoryItem[]; // 图片历史记录
   isLoading: boolean;
   isSettingsOpen: boolean;
 
@@ -13,6 +14,8 @@ interface AppState {
   updateSettings: (newSettings: Partial<AppSettings>) => void;
   addMessage: (message: ChatMessage) => void;
   updateLastMessage: (parts: Part[], isError?: boolean, thinkingDuration?: number) => void;
+  addImageToHistory: (image: ImageHistoryItem) => void;
+  clearImageHistory: () => void;
   setLoading: (loading: boolean) => void;
   toggleSettings: () => void;
   clearHistory: () => void;
@@ -36,6 +39,7 @@ export const useAppStore = create<AppState>()(
         theme: 'system',
       },
       messages: [],
+      imageHistory: [], // 初始化图片历史记录
       isLoading: false,
       isSettingsOpen: window.innerWidth > 640, // Open by default only on desktop (sm breakpoint)
 
@@ -49,10 +53,10 @@ export const useAppStore = create<AppState>()(
           messages: [...state.messages, message],
         })),
 
-      updateLastMessage: (parts, isError = false, thinkingDuration) => 
+      updateLastMessage: (parts, isError = false, thinkingDuration) =>
         set((state) => {
             const messages = [...state.messages];
-            
+
             if (messages.length > 0) {
                 messages[messages.length - 1] = {
                     ...messages[messages.length - 1],
@@ -61,9 +65,18 @@ export const useAppStore = create<AppState>()(
                     ...(thinkingDuration !== undefined && { thinkingDuration })
                 };
             }
-            
+
             return { messages };
         }),
+
+      addImageToHistory: (image) =>
+        set((state) => {
+          // 最多保留100张图片
+          const newHistory = [image, ...state.imageHistory].slice(0, 100);
+          return { imageHistory: newHistory };
+        }),
+
+      clearImageHistory: () => set({ imageHistory: [] }),
 
       setLoading: (loading) => set({ isLoading: loading }),
       
@@ -94,6 +107,7 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({
         apiKey: state.apiKey,
         settings: state.settings,
+        imageHistory: state.imageHistory, // 持久化图片历史记录
       }),
     }
   )
