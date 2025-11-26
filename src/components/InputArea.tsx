@@ -146,7 +146,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
     setInputText(value);
 
     // 检测 /t 触发（结尾是 /t 或 /t 后面跟着空格）
-    if (value.endsWith('/t') || value.match(/\/t\s/)) {
+    if (value.endsWith('/t') || value.match(/\/t\s*$/)) {
       setIsQuickPickerOpen(true);
     }
   };
@@ -154,7 +154,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
   // 处理快速选择器选择
   const handleQuickPickerSelect = (prompt: string) => {
     // 替换 /t 为实际提示词
-    const newText = inputText.replace(/\/t\s*$/, prompt);
+    const newText = inputText.replace(/\/t\s*/g, prompt);
     setInputText(newText);
     setIsQuickPickerOpen(false);
 

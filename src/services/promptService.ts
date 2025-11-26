@@ -130,7 +130,7 @@ function isValidPromptItem(item: any): item is PromptItem {
  */
 export function getCategories(prompts: PromptItem[]): string[] {
   const categories = new Set<string>();
-  prompts.forEach(p => categories.add(p.category));
+  prompts.forEach(p => { categories.add(p.category); });
   return ['全部', ...Array.from(categories).sort()];
 }
 

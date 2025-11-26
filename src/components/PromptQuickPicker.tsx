@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Search, Sparkles, X, ArrowUp, ArrowDown, ExternalLink } from 'lucide-react';
+import { Search, Sparkles, X, ExternalLink } from 'lucide-react';
 import { PromptItem } from '../types';
 import { fetchPrompts, getCategories } from '../services/promptService';
 
@@ -135,10 +135,15 @@ export const PromptQuickPicker: React.FC<PromptQuickPickerProps> = ({
       <div
         className="fixed inset-0 z-40 bg-black/20"
         onClick={onClose}
+        tabIndex={-1}
       />
 
       {/* 快速选择器 */}
-      <div className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 mx-auto max-w-6xl">
+      <div
+        className="fixed inset-x-4 top-1/2 -translate-y-1/2 z-50 mx-auto max-w-6xl"
+        role="dialog"
+        aria-modal="true"
+      >
         <div className="rounded-2xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 shadow-2xl overflow-hidden">
 
           {/* 搜索框 */}
@@ -206,7 +211,7 @@ export const PromptQuickPicker: React.FC<PromptQuickPickerProps> = ({
                 ) : (
                   filteredPrompts.map((prompt, index) => (
                     <div
-                      key={index}
+                      key={`${prompt.title}-${prompt.category}`}
                       onClick={() => handleSelect(prompt)}
                       onMouseEnter={() => setHoveredPrompt(prompt)}
                       className={`px-4 py-3 cursor-pointer transition border-b border-gray-100 dark:border-gray-700/50 last:border-0 ${

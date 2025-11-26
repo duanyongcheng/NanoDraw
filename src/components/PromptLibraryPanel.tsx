@@ -149,7 +149,7 @@ export const PromptLibraryPanel: React.FC<PromptLibraryPanelProps> = ({ onSelect
             <div className="grid gap-4 grid-cols-1">
               {filteredPrompts.map((prompt, index) => (
                 <PromptCard
-                  key={index}
+                  key={`${prompt.title}-${prompt.author ?? index}`}
                   prompt={prompt}
                   onSelect={handleSelectPrompt}
                 />
