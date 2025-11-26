@@ -17,6 +17,9 @@ export default defineConfig(({ mode }) => {
         VitePWA({
           registerType: 'autoUpdate',
           includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg'],
+          devOptions: {
+            enabled: true
+          },
           manifest: {
             name: 'UndyDraw',
             short_name: 'UndyDraw',
