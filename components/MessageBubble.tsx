@@ -4,6 +4,7 @@ import remarkGfm from 'remark-gfm';
 import { ChatMessage, Part } from '../types';
 import { User, Sparkles, ChevronDown, ChevronRight, BrainCircuit, Trash2, RotateCcw, Download } from 'lucide-react';
 import { useUiStore } from '../store/useUiStore';
+import { downloadImage, openImageInNewTab } from '../utils/imageUtils';
 
 interface Props {
   message: ChatMessage;
@@ -12,40 +13,6 @@ interface Props {
   onDelete: (id: string) => void;
   onRegenerate: (id: string) => void;
 }
-
-const openImageInNewTab = (mimeType: string, base64Data: string) => {
-  const byteCharacters = atob(base64Data);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  window.open(url, '_blank');
-  setTimeout(() => URL.revokeObjectURL(url), 60000);
-};
-
-const downloadImage = (mimeType: string, base64Data: string) => {
-  const byteCharacters = atob(base64Data);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  const extension = mimeType.split('/')[1] || 'png';
-  link.download = `gemini-image-${Date.now()}.${extension}`;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-};
 
 const ThinkingContentItem: React.FC<{ part: Part }> = ({ part }) => {
   const [isImageHovered, setIsImageHovered] = useState(false);

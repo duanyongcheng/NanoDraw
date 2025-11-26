@@ -3,26 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
 import { X, Download, Trash2, ImageIcon } from 'lucide-react';
 import { ImageHistoryItem } from '../types';
-
-const downloadImage = (mimeType: string, base64Data: string, filename: string) => {
-  const byteCharacters = atob(base64Data);
-  const byteNumbers = new Array(byteCharacters.length);
-  for (let i = 0; i < byteCharacters.length; i++) {
-      byteNumbers[i] = byteCharacters.charCodeAt(i);
-  }
-  const byteArray = new Uint8Array(byteNumbers);
-  const blob = new Blob([byteArray], { type: mimeType });
-  const url = URL.createObjectURL(blob);
-
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-};
+import { downloadImage } from '../utils/imageUtils';
 
 interface Props {
   isOpen: boolean;
@@ -123,7 +104,7 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
                   </button>
 
                   {/* Prompt Preview */}
-                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
+                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-linear-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                     <p className="text-xs text-white line-clamp-2">{image.prompt || '无描述'}</p>
                   </div>
                 </div>
@@ -136,7 +117,7 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
       {/* Image Preview Modal */}
       {selectedImage && (
         <div
-          className="fixed inset-0 bg-black/90 z-[60] flex items-center justify-center p-4"
+          className="fixed inset-0 bg-black/90 z-60 flex items-center justify-center p-4"
           onClick={() => setSelectedImage(null)}
         >
           <div className="relative max-w-4xl max-h-[90vh] flex flex-col gap-4">
