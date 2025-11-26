@@ -1,14 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
 import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw } from 'lucide-react';
-import { fetchBalance, formatBalance, BalanceInfo } from '../services/balanceService';
+import { formatBalance } from '../services/balanceService';
 
 export const SettingsPanel: React.FC = () => {
-  const { apiKey, settings, updateSettings, toggleSettings, removeApiKey, clearHistory } = useAppStore();
+  const { apiKey, settings, updateSettings, toggleSettings, removeApiKey, clearHistory, isSettingsOpen, fetchBalance, balance } = useAppStore();
   const { addToast, showDialog } = useUiStore();
-  const [balance, setBalance] = useState<BalanceInfo | null>(null);
   const [loadingBalance, setLoadingBalance] = useState(false);
+  
+  // 首次加载或打开面板时如果没有余额数据，尝试获取
+  useEffect(() => {
+    if (apiKey && isSettingsOpen && !balance && !loadingBalance) {
+        setLoadingBalance(true);
+        fetchBalance().finally(() => setLoadingBalance(false));
+    }
+  }, [apiKey, isSettingsOpen, balance, fetchBalance]);
 
   const handleFetchBalance = async () => {
     if (!apiKey) {
@@ -18,24 +25,14 @@ export const SettingsPanel: React.FC = () => {
 
     setLoadingBalance(true);
     try {
-      const balanceInfo = await fetchBalance(apiKey, settings);
-      setBalance(balanceInfo);
+      await fetchBalance();
       addToast("余额查询成功", 'success');
     } catch (error: any) {
-      console.error('余额查询失败:', error);
       addToast(`余额查询失败: ${error.message}`, 'error');
-      setBalance(null);
     } finally {
       setLoadingBalance(false);
     }
   };
-
-  // 自动查询余额(仅首次打开设置面板时)
-  useEffect(() => {
-    if (apiKey && !balance && !loadingBalance) {
-      handleFetchBalance();
-    }
-  }, [apiKey]);
 
   const getBookmarkUrl = () => {
     if (!apiKey) return window.location.href;

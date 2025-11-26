@@ -22,7 +22,8 @@ export const ChatInterface: React.FC = () => {
     isLoading,
     setLoading,
     deleteMessage,
-    sliceMessages
+    sliceMessages,
+    fetchBalance
   } = useAppStore();
   
   const [showArcade, setShowArcade] = useState(false);
@@ -206,6 +207,8 @@ export const ChatInterface: React.FC = () => {
     } finally {
       setLoading(false);
       abortControllerRef.current = null;
+      // 每次生成结束后静默刷新余额
+      fetchBalance();
     }
   };
 

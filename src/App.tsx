@@ -3,7 +3,8 @@ import { useAppStore } from './store/useAppStore';
 import { ChatInterface } from './components/ChatInterface';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { GlobalDialog } from './components/ui/GlobalDialog';
-import { Settings, Sun, Moon, Github, ImageIcon } from 'lucide-react';
+import { formatBalance } from './services/balanceService';
+import { Settings, Sun, Moon, Github, ImageIcon, DollarSign } from 'lucide-react';
 
 // Lazy load components
 const ApiKeyModal = lazy(() => import('./components/ApiKeyModal').then(module => ({ default: module.ApiKeyModal })));
@@ -11,7 +12,7 @@ const SettingsPanel = lazy(() => import('./components/SettingsPanel').then(modul
 const ImageHistoryPanel = lazy(() => import('./components/ImageHistoryPanel').then(module => ({ default: module.ImageHistoryPanel })));
 
 const App: React.FC = () => {
-  const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory } = useAppStore();
+  const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory, balance, fetchBalance } = useAppStore();
   const [mounted, setMounted] = useState(false);
   const [isImageHistoryOpen, setIsImageHistoryOpen] = useState(false);
 
@@ -73,6 +74,20 @@ const App: React.FC = () => {
         
         {apiKey && (
           <div className="flex items-center gap-2">
+            {/* Balance Display - Desktop only */}
+            {balance && (
+                <div 
+                    onClick={() => fetchBalance()}
+                    className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition mr-2"
+                    title="点击刷新余额"
+                >
+                    <DollarSign className="h-4 w-4 text-green-600 dark:text-green-500" />
+                    <span className={balance.remaining < 1 ? "text-red-500" : ""}>
+                        {formatBalance(balance.remaining, balance.isUnlimited)}
+                    </span>
+                </div>
+            )}
+
             <a
               href="https://github.com/faithleysath/UndyDraw"
               target="_blank"

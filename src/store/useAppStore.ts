@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import { get, set, del } from 'idb-keyval';
+import { fetchBalance, BalanceInfo } from '../services/balanceService';
 import { AppSettings, ChatMessage, Part, ImageHistoryItem } from '../types';
 
 // Custom IndexedDB storage with LocalStorage migration
@@ -39,8 +40,10 @@ interface AppState {
   isLoading: boolean;
   isSettingsOpen: boolean;
   inputText: string; // Global input text state
+  balance: BalanceInfo | null;
 
   setApiKey: (key: string) => void;
+  fetchBalance: () => Promise<void>;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
   addMessage: (message: ChatMessage) => void;
   updateLastMessage: (parts: Part[], isError?: boolean, thinkingDuration?: number) => void;
@@ -58,7 +61,7 @@ interface AppState {
 
 export const useAppStore = create<AppState>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       apiKey: null,
       settings: {
         resolution: '1K',
@@ -75,8 +78,20 @@ export const useAppStore = create<AppState>()(
       isLoading: false,
       isSettingsOpen: window.innerWidth > 640, // Open by default only on desktop (sm breakpoint)
       inputText: '',
+      balance: null,
 
       setApiKey: (key) => set({ apiKey: key }),
+
+      fetchBalance: async () => {
+        const { apiKey, settings } = get();
+        if (!apiKey) return;
+        try {
+          const balance = await fetchBalance(apiKey, settings);
+          set({ balance });
+        } catch (error) {
+          console.error('Failed to update balance:', error);
+        }
+      },
       
       updateSettings: (newSettings) => 
         set((state) => ({ settings: { ...state.settings, ...newSettings } })),

@@ -3,7 +3,7 @@ import { useAppStore } from '../store/useAppStore';
 import { Key, ExternalLink, ChevronDown, ChevronRight, Settings2 } from 'lucide-react';
 
 export const ApiKeyModal: React.FC = () => {
-  const { setApiKey, updateSettings, settings } = useAppStore();
+  const { setApiKey, updateSettings, settings, fetchBalance } = useAppStore();
   const [inputKey, setInputKey] = useState('');
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [endpoint, setEndpoint] = useState(settings.customEndpoint || '');
@@ -24,6 +24,8 @@ export const ApiKeyModal: React.FC = () => {
       modelName: model
     });
     setApiKey(inputKey);
+    // 立即尝试刷新余额
+    setTimeout(() => fetchBalance(), 0);
   };
 
   return (
@@ -47,7 +49,7 @@ export const ApiKeyModal: React.FC = () => {
               type="password"
               id="apiKey"
               value={inputKey}
-              onChange={(e) => setInputKey(e.target.value)}
+              onChange={(e) => setInputKey(e.currentTarget.value)}
               className="w-full rounded-lg bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-800 px-4 py-3 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition"
               placeholder="AIzaSy..."
               autoFocus
@@ -80,7 +82,7 @@ export const ApiKeyModal: React.FC = () => {
                     <input
                       type="text"
                       value={endpoint}
-                      onChange={(e) => setEndpoint(e.target.value)}
+                      onChange={(e) => setEndpoint(e.currentTarget.value)}
                       className="w-full rounded-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
                       placeholder="https://undyapi.com"
                     />
@@ -90,7 +92,7 @@ export const ApiKeyModal: React.FC = () => {
                     <input
                       type="text"
                       value={model}
-                      onChange={(e) => setModel(e.target.value)}
+                      onChange={(e) => setModel(e.currentTarget.value)}
                       className="w-full rounded-md bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 px-3 py-2 text-sm text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:border-blue-500 focus:outline-none"
                       placeholder="gemini-3-pro-image-preview"
                     />
