@@ -1,6 +1,35 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
+import { get, set, del } from 'idb-keyval';
 import { AppSettings, ChatMessage, Part, ImageHistoryItem } from '../types';
+
+// Custom IndexedDB storage with LocalStorage migration
+const storage: StateStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    const value = await get(name);
+    if (value) {
+      return value;
+    }
+    // Migration: Check LocalStorage if not found in IndexedDB
+    try {
+      const localValue = localStorage.getItem(name);
+      if (localValue) {
+        await set(name, localValue);
+        localStorage.removeItem(name);
+        return localValue;
+      }
+    } catch (e) {
+      console.warn('LocalStorage migration failed:', e);
+    }
+    return null;
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    await set(name, value);
+  },
+  removeItem: async (name: string): Promise<void> => {
+    await del(name);
+  },
+};
 
 interface AppState {
   apiKey: string | null;
@@ -104,6 +133,7 @@ export const useAppStore = create<AppState>()(
     }),
     {
       name: 'gemini-pro-storage',
+      storage: createJSONStorage(() => storage),
       partialize: (state) => ({
         apiKey: state.apiKey,
         settings: state.settings,
