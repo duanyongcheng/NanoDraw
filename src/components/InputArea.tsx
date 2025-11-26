@@ -226,7 +226,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
              回车发送,Shift + 回车换行。支持拖拽或点击上传最多 14 张参考图片。
            </span>
            <span className="sm:hidden">
-             点击发送按钮生成图片。支持点击上传最多 14 张参考图片。
+             点击发送按钮生成图片。支持上传最多 14 张参考图片。
            </span>
         </div>
       </div>
