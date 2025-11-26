@@ -38,14 +38,17 @@ interface AppState {
   imageHistory: ImageHistoryItem[]; // 图片历史记录
   isLoading: boolean;
   isSettingsOpen: boolean;
+  inputText: string; // Global input text state
 
   setApiKey: (key: string) => void;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
   addMessage: (message: ChatMessage) => void;
   updateLastMessage: (parts: Part[], isError?: boolean, thinkingDuration?: number) => void;
   addImageToHistory: (image: ImageHistoryItem) => void;
+  deleteImageFromHistory: (id: string) => void;
   clearImageHistory: () => void;
   setLoading: (loading: boolean) => void;
+  setInputText: (text: string) => void;
   toggleSettings: () => void;
   clearHistory: () => void;
   removeApiKey: () => void;
@@ -71,6 +74,7 @@ export const useAppStore = create<AppState>()(
       imageHistory: [], // 初始化图片历史记录
       isLoading: false,
       isSettingsOpen: window.innerWidth > 640, // Open by default only on desktop (sm breakpoint)
+      inputText: '',
 
       setApiKey: (key) => set({ apiKey: key }),
       
@@ -105,9 +109,16 @@ export const useAppStore = create<AppState>()(
           return { imageHistory: newHistory };
         }),
 
+      deleteImageFromHistory: (id) =>
+        set((state) => ({
+          imageHistory: state.imageHistory.filter((img) => img.id !== id),
+        })),
+
       clearImageHistory: () => set({ imageHistory: [] }),
 
       setLoading: (loading) => set({ isLoading: loading }),
+      
+      setInputText: (text) => set({ inputText: text }),
       
       toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
 

@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { Send, ImagePlus, X, Square, Gamepad2 } from 'lucide-react';
+import { useAppStore } from '../store/useAppStore';
 import { Attachment } from '../types';
 
 interface Props {
@@ -11,14 +12,14 @@ interface Props {
 }
 
 export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArcadeOpen, disabled }) => {
-  const [text, setText] = useState('');
+  const { inputText, setInputText } = useAppStore();
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dragCounter = useRef(0);
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
       handleSubmit();
@@ -26,8 +27,8 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
   };
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      await processFiles(Array.from(e.target.files));
+    if (e.currentTarget.files) {
+      await processFiles(Array.from(e.currentTarget.files));
       // Reset input
       if (fileInputRef.current) fileInputRef.current.value = '';
     }
@@ -58,7 +59,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
     setAttachments(prev => [...prev, ...newAttachments].slice(0, 14));
   };
 
-  const handleDragEnter = (e: React.DragEvent) => {
+  const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -69,7 +70,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
     }
   };
 
-  const handleDragLeave = (e: React.DragEvent) => {
+  const handleDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -80,12 +81,12 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
     }
   };
 
-  const handleDragOver = (e: React.DragEvent) => {
+  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
   };
 
-  const handleDrop = async (e: React.DragEvent) => {
+  const handleDrop = async (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
 
@@ -103,10 +104,10 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
   };
 
   const handleSubmit = () => {
-    if ((!text.trim() && attachments.length === 0) || disabled) return;
+    if ((!inputText.trim() && attachments.length === 0) || disabled) return;
     
-    onSend(text, attachments);
-    setText('');
+    onSend(inputText, attachments);
+    setInputText('');
     setAttachments([]);
   };
 
@@ -190,8 +191,8 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
 
           <textarea
             ref={textareaRef}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
+            value={inputText}
+            onChange={(e) => setInputText(e.currentTarget.value)}
             onKeyDown={handleKeyDown}
             disabled={disabled}
             placeholder="描述一张图片..."
@@ -210,7 +211,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
           ) : (
             <button
               onClick={handleSubmit}
-              disabled={!text.trim() && attachments.length === 0}
+              disabled={!inputText.trim() && attachments.length === 0}
               className="mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-white shadow-lg shadow-blue-600/20 hover:bg-blue-500 disabled:opacity-50 disabled:bg-gray-200 dark:disabled:bg-gray-700 disabled:shadow-none transition"
             >
               <Send className="h-5 w-5" />
