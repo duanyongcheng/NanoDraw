@@ -25,6 +25,9 @@ export default defineConfig(({ mode }) => {
             short_name: 'UndyDraw',
             description: 'Nano Banana Pro在线客户端',
             theme_color: '#ffffff',
+            background_color: '#ffffff',
+            display: 'standalone',
+            orientation: 'portrait',
             icons: [
               {
                 src: 'pwa-192x192.png',

@@ -94,10 +94,17 @@ const App: React.FC = () => {
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
     
     const applyTheme = () => {
-      if (settings.theme === 'dark' || (settings.theme === 'system' && systemTheme.matches)) {
+      const isDark = settings.theme === 'dark' || (settings.theme === 'system' && systemTheme.matches);
+      if (isDark) {
         root.classList.add('dark');
+        // Update theme-color for PWA/Browser bar
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: dark)"]')?.setAttribute('content', '#030712');
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: light)"]')?.setAttribute('content', '#030712');
       } else {
         root.classList.remove('dark');
+        // Update theme-color for PWA/Browser bar
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: dark)"]')?.setAttribute('content', '#ffffff');
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: light)"]')?.setAttribute('content', '#ffffff');
       }
     };
 
