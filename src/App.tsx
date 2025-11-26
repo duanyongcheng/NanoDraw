@@ -1,18 +1,36 @@
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { useAppStore } from './store/useAppStore';
 import { ChatInterface } from './components/ChatInterface';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { GlobalDialog } from './components/ui/GlobalDialog';
 import { formatBalance } from './services/balanceService';
 import { Settings, Sun, Moon, Github, ImageIcon, DollarSign } from 'lucide-react';
+import { lazyWithRetry, preloadComponents } from './utils/lazyLoadUtils';
 
 // Lazy load components
-const ApiKeyModal = lazy(() => import('./components/ApiKeyModal').then(module => ({ default: module.ApiKeyModal })));
-const SettingsPanel = lazy(() => import('./components/SettingsPanel').then(module => ({ default: module.SettingsPanel })));
-const ImageHistoryPanel = lazy(() => import('./components/ImageHistoryPanel').then(module => ({ default: module.ImageHistoryPanel })));
+const ApiKeyModal = lazyWithRetry(() => import('./components/ApiKeyModal').then(module => ({ default: module.ApiKeyModal })));
+const SettingsPanel = lazyWithRetry(() => import('./components/SettingsPanel').then(module => ({ default: module.SettingsPanel })));
+const ImageHistoryPanel = lazyWithRetry(() => import('./components/ImageHistoryPanel').then(module => ({ default: module.ImageHistoryPanel })));
 
 const App: React.FC = () => {
   const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory, balance, fetchBalance } = useAppStore();
+
+  // Preload components after mount
+  useEffect(() => {
+    preloadComponents([
+      () => import('./components/ApiKeyModal'),
+      () => import('./components/SettingsPanel'),
+      () => import('./components/ImageHistoryPanel'),
+      // Also preload components used in ChatInterface
+      () => import('./components/ThinkingIndicator'),
+      () => import('./components/MessageBubble'),
+      // Preload Games
+      () => import('./components/games/SnakeGame'),
+      () => import('./components/games/DinoGame'),
+      () => import('./components/games/LifeGame'),
+      () => import('./components/games/Puzzle2048')
+    ]);
+  }, []);
   const [mounted, setMounted] = useState(false);
   const [isImageHistoryOpen, setIsImageHistoryOpen] = useState(false);
 

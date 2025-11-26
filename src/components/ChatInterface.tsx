@@ -6,10 +6,11 @@ import { streamGeminiResponse, generateContent } from '../services/geminiService
 import { convertMessagesToHistory } from '../utils/messageUtils';
 import { ChatMessage, Attachment, Part } from '../types';
 import { Sparkles } from 'lucide-react';
+import { lazyWithRetry } from '../utils/lazyLoadUtils';
 
 // Lazy load components
-const ThinkingIndicator = React.lazy(() => import('./ThinkingIndicator').then(m => ({ default: m.ThinkingIndicator })));
-const MessageBubble = React.lazy(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })));
+const ThinkingIndicator = lazyWithRetry(() => import('./ThinkingIndicator').then(m => ({ default: m.ThinkingIndicator })));
+const MessageBubble = lazyWithRetry(() => import('./MessageBubble').then(m => ({ default: m.MessageBubble })));
 
 export const ChatInterface: React.FC = () => {
   const {

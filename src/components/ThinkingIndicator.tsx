@@ -1,12 +1,13 @@
-import React, { useEffect, useState, Suspense, lazy } from 'react';
+import React, { useEffect, useState, Suspense } from 'react';
 import { Sparkles, Gamepad2, BrainCircuit, X, CheckCircle2 } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import { lazyWithRetry } from '../utils/lazyLoadUtils';
 
 // Lazy load games
-const SnakeGame = lazy(() => import('./games/SnakeGame').then(m => ({ default: m.SnakeGame })));
-const DinoGame = lazy(() => import('./games/DinoGame').then(m => ({ default: m.DinoGame })));
-const LifeGame = lazy(() => import('./games/LifeGame').then(m => ({ default: m.LifeGame })));
-const Puzzle2048 = lazy(() => import('./games/Puzzle2048').then(m => ({ default: m.Puzzle2048 })));
+const SnakeGame = lazyWithRetry(() => import('./games/SnakeGame').then(m => ({ default: m.SnakeGame })));
+const DinoGame = lazyWithRetry(() => import('./games/DinoGame').then(m => ({ default: m.DinoGame })));
+const LifeGame = lazyWithRetry(() => import('./games/LifeGame').then(m => ({ default: m.LifeGame })));
+const Puzzle2048 = lazyWithRetry(() => import('./games/Puzzle2048').then(m => ({ default: m.Puzzle2048 })));
 
 interface Props {
     onClose?: () => void;
