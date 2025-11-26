@@ -258,8 +258,8 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
             onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             disabled={disabled}
-            placeholder="描述一张图片..."
-            className="mb-1 max-h-[200px] min-h-10 w-full md:w-full order-first md:order-none resize-none bg-transparent py-2.5 text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none disabled:opacity-50 field-sizing-content"
+            placeholder="描述一张图片或问一个问题......"
+            className="mb-1 max-h-[200px] min-h-10 w-full md:w-full order-first md:order-0 resize-none bg-transparent py-2.5 text-base text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none disabled:opacity-50 field-sizing-content"
             rows={1}
           />
 
