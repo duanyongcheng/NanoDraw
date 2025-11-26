@@ -126,7 +126,7 @@ const App: React.FC = () => {
             rel="noopener noreferrer"
             className="flex h-10 w-10 items-center justify-center overflow-hidden hover:opacity-80 transition-opacity"
           >
-             <img src="https://theai.do/img/u.png" alt="Logo" className="h-full w-full object-cover" />
+             <img src="/logo.svg" alt="Logo" className="h-full w-full object-cover" />
           </a>
           <div className="hidden sm:block">
             <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Nano Banana Pro</h1>
