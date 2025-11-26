@@ -61,10 +61,15 @@ const App: React.FC = () => {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-900/50 px-6 py-4 backdrop-blur-md z-10 transition-colors duration-200">
         <div className="flex items-center gap-3">
-          <div className="flex h-10 w-10 items-center justify-center overflow-hidden">
+          <a 
+            href="https://undyapi.com" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="flex h-10 w-10 items-center justify-center overflow-hidden hover:opacity-80 transition-opacity"
+          >
              <img src="https://theai.do/img/u.png" alt="Logo" className="h-full w-full object-cover" />
-          </div>
-          <div>
+          </a>
+          <div className="hidden sm:block">
             <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Nano Banana Pro</h1>
             <p className="text-xs text-gray-500 dark:text-gray-400">
               由 <a href="https://undyapi.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 hover:underline transition-colors">Undy API</a> 赞助联合开发
