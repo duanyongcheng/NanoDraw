@@ -1,34 +1,20 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
-import { get, set, del } from 'idb-keyval';
+import { get as getVal, set as setVal, del as delVal } from 'idb-keyval';
 import { fetchBalance, BalanceInfo } from '../services/balanceService';
 import { AppSettings, ChatMessage, Part, ImageHistoryItem } from '../types';
+import { createThumbnail } from '../utils/imageUtils';
 
-// Custom IndexedDB storage with LocalStorage migration
+// Custom IndexedDB storage
 const storage: StateStorage = {
   getItem: async (name: string): Promise<string | null> => {
-    const value = await get(name);
-    if (value) {
-      return value;
-    }
-    // Migration: Check LocalStorage if not found in IndexedDB
-    try {
-      const localValue = localStorage.getItem(name);
-      if (localValue) {
-        await set(name, localValue);
-        localStorage.removeItem(name);
-        return localValue;
-      }
-    } catch (e) {
-      console.warn('LocalStorage migration failed:', e);
-    }
-    return null;
+    return await getVal(name) || null;
   },
   setItem: async (name: string, value: string): Promise<void> => {
-    await set(name, value);
+    await setVal(name, value);
   },
   removeItem: async (name: string): Promise<void> => {
-    await del(name);
+    await delVal(name);
   },
 };
 
@@ -49,9 +35,10 @@ interface AppState {
   updateSettings: (newSettings: Partial<AppSettings>) => void;
   addMessage: (message: ChatMessage) => void;
   updateLastMessage: (parts: Part[], isError?: boolean, thinkingDuration?: number) => void;
-  addImageToHistory: (image: ImageHistoryItem) => void;
-  deleteImageFromHistory: (id: string) => void;
-  clearImageHistory: () => void;
+  addImageToHistory: (image: ImageHistoryItem) => Promise<void>;
+  deleteImageFromHistory: (id: string) => Promise<void>;
+  clearImageHistory: () => Promise<void>;
+  cleanInvalidHistory: () => Promise<void>;
   setLoading: (loading: boolean) => void;
   setInputText: (text: string) => void;
   toggleSettings: () => void;
@@ -121,19 +108,131 @@ export const useAppStore = create<AppState>()(
             return { messages };
         }),
 
-      addImageToHistory: (image) =>
+      addImageToHistory: async (image) => {
+        // 分离存储：生成缩略图存入 State，原图存入 IDB
+        let thumbnail = image.thumbnailData;
+        if (!thumbnail && image.base64Data) {
+            try {
+                thumbnail = await createThumbnail(image.base64Data, image.mimeType);
+            } catch (e) {
+                console.error('Failed to create thumbnail', e);
+            }
+        }
+
+        // 如果有原图数据，存入 IDB 并从 State 对象中移除
+        if (image.base64Data) {
+            try {
+                await setVal(`image_data_${image.id}`, image.base64Data);
+            } catch (e) {
+                console.error('Failed to save image data to IDB', e);
+            }
+        }
+
+        const newImageItem: ImageHistoryItem = {
+            ...image,
+            thumbnailData: thumbnail,
+            base64Data: undefined // 不在 State 中存储原图
+        };
+
         set((state) => {
           // 最多保留100张图片
-          const newHistory = [image, ...state.imageHistory].slice(0, 100);
+          const newHistory = [newImageItem, ...state.imageHistory].slice(0, 100);
+          
+          // 如果超出了100张，需要清理被移除图片的 IDB 数据
+          if (state.imageHistory.length >= 100) {
+              const removed = state.imageHistory[99];
+              if (removed) {
+                  delVal(`image_data_${removed.id}`).catch(console.error);
+              }
+          }
+          
           return { imageHistory: newHistory };
-        }),
+        });
+      },
 
-      deleteImageFromHistory: (id) =>
+      deleteImageFromHistory: async (id) => {
+        // 清理 IDB 数据
+        try {
+            await delVal(`image_data_${id}`);
+        } catch (e) {
+            console.error('Failed to delete image data from IDB', e);
+        }
+
         set((state) => ({
           imageHistory: state.imageHistory.filter((img) => img.id !== id),
-        })),
+        }));
+      },
 
-      clearImageHistory: () => set({ imageHistory: [] }),
+      clearImageHistory: async () => {
+        const { imageHistory } = get();
+        // 清理所有图片的 IDB 数据
+        for (const img of imageHistory) {
+            try {
+                await delVal(`image_data_${img.id}`);
+            } catch (e) {
+                console.error(`Failed to delete image data ${img.id}`, e);
+            }
+        }
+        set({ imageHistory: [] });
+      },
+
+      cleanInvalidHistory: async () => {
+        const { imageHistory } = get();
+        let hasChanges = false;
+        
+        const newHistoryPromises = imageHistory.map(async (img) => {
+            // Case 1: 已经是新格式 (有缩略图)
+            if (img.thumbnailData) {
+                 // 如果还有 base64Data，顺手清理并确保 IDB 有数据
+                 if (img.base64Data) {
+                     try {
+                         await setVal(`image_data_${img.id}`, img.base64Data);
+                     } catch (e) { console.error(e); }
+                     
+                     hasChanges = true;
+                     return { ...img, base64Data: undefined };
+                 }
+                 return img;
+            }
+
+            // Case 2: 旧格式 (无缩略图，有 base64Data) -> 迁移
+            if (!img.thumbnailData && img.base64Data) {
+                hasChanges = true;
+                try {
+                    // 1. 生成缩略图
+                    const thumbnail = await createThumbnail(img.base64Data, img.mimeType);
+                    // 2. 存入 IDB
+                    await setVal(`image_data_${img.id}`, img.base64Data);
+                    
+                    // 3. 返回新结构
+                    return {
+                        ...img,
+                        thumbnailData: thumbnail,
+                        base64Data: undefined
+                    } as ImageHistoryItem;
+                } catch (e) {
+                    console.error(`Failed to migrate image ${img.id}`, e);
+                    // 迁移失败，可能数据坏了，返回 null 标记删除
+                    return null; 
+                }
+            }
+
+            // Case 3: 坏数据 (无缩略图，无 base64Data) -> 删除
+            hasChanges = true;
+            // 尝试清理残留 IDB
+            try {
+                await delVal(`image_data_${img.id}`);
+            } catch (e) {}
+            return null;
+        });
+
+        const processedHistory = await Promise.all(newHistoryPromises);
+        const validHistory = processedHistory.filter((img): img is ImageHistoryItem => img !== null);
+
+        if (hasChanges || validHistory.length !== imageHistory.length) {
+            set({ imageHistory: validHistory });
+        }
+      },
 
       setLoading: (loading) => set({ isLoading: loading }),
       

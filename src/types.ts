@@ -43,7 +43,8 @@ export interface Attachment {
 export interface ImageHistoryItem {
   id: string;
   mimeType: string;
-  base64Data: string;
+  base64Data?: string; // Raw base64 for API (Optional if stored separately)
+  thumbnailData?: string; // Base64 thumbnail
   prompt: string; // 生成图片的提示词
   timestamp: number;
   modelName?: string;

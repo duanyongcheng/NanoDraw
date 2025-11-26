@@ -15,6 +15,46 @@ export const base64ToBlob = (base64Data: string, mimeType: string): Blob => {
 };
 
 /**
+ * 创建图片缩略图
+ * @param base64Data 原图 Base64
+ * @param mimeType MIME 类型
+ * @param maxWidth 最大宽度，默认 200px
+ * @returns Promise<string> 缩略图 Base64
+ */
+export const createThumbnail = (base64Data: string, mimeType: string, maxWidth: number = 200): Promise<string> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      let width = img.width;
+      let height = img.height;
+
+      if (width > maxWidth) {
+        height = (height * maxWidth) / width;
+        width = maxWidth;
+      }
+
+      canvas.width = width;
+      canvas.height = height;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) {
+        reject(new Error('Failed to get canvas context'));
+        return;
+      }
+
+      ctx.drawImage(img, 0, 0, width, height);
+      // 使用较低质量导出 JPEG 缩略图，或者保持原格式
+      // 这里统一用 JPEG 以减小体积，除非是 PNG 透明图
+      const exportType = mimeType === 'image/png' ? 'image/png' : 'image/jpeg';
+      resolve(canvas.toDataURL(exportType, 0.7).split(',')[1]); // 返回不带前缀的 base64
+    };
+    img.onerror = reject;
+    img.src = `data:${mimeType};base64,${base64Data}`;
+  });
+};
+
+/**
  * 下载图片
  * @param mimeType 图片的 MIME 类型
  * @param base64Data 图片的 Base64 数据

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
-import { X, Download, Trash2, ImageIcon, Search, Copy, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
+import { get as getItem } from 'idb-keyval';
+import { X, Download, Trash2, ImageIcon, Search, Copy, ArrowRight, ArrowLeft, RefreshCw, Loader2 } from 'lucide-react';
 import { ImageHistoryItem } from '../types';
 import { downloadImage } from '../utils/imageUtils';
 
@@ -11,17 +12,53 @@ interface Props {
 }
 
 export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
-  const { imageHistory, clearImageHistory, deleteImageFromHistory, setInputText } = useAppStore();
+  const { imageHistory, clearImageHistory, deleteImageFromHistory, setInputText, cleanInvalidHistory } = useAppStore();
   const { showDialog, addToast } = useUiStore();
   const [selectedImage, setSelectedImage] = useState<ImageHistoryItem | null>(null);
+  const [fullResData, setFullResData] = useState<string | null>(null);
+  const [loadingFullRes, setLoadingFullRes] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+
+  // 自动清理无效历史记录
+  useEffect(() => {
+    cleanInvalidHistory();
+  }, [cleanInvalidHistory]);
+
+  // 加载大图数据
+  useEffect(() => {
+    if (selectedImage) {
+        setLoadingFullRes(true);
+        getItem(`image_data_${selectedImage.id}`)
+            .then((data) => {
+                if (data) {
+                    setFullResData(data as string);
+                } else {
+                    // 如果找不到原图，尝试使用缩略图显示（虽然很模糊）
+                    setFullResData(selectedImage.thumbnailData || null);
+                }
+            })
+            .catch(err => {
+                console.error("Failed to load full image", err);
+                setFullResData(selectedImage.thumbnailData || null);
+            })
+            .finally(() => setLoadingFullRes(false));
+    } else {
+        setFullResData(null);
+        setLoadingFullRes(false);
+    }
+  }, [selectedImage]);
 
   // Filter images based on search term
   const filteredHistory = useMemo(() => {
-    if (!searchTerm.trim()) return imageHistory;
-    return imageHistory.filter(img => 
-      img.prompt.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    // 基础过滤：必须包含缩略图数据才显示，避免破图
+    let list = imageHistory.filter(item => !!item.thumbnailData);
+    
+    if (searchTerm.trim()) {
+        list = list.filter((item) =>
+          item.prompt.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+    }
+    return list;
   }, [imageHistory, searchTerm]);
 
   // Keyboard navigation for lightbox
@@ -49,10 +86,28 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
     }
   };
 
-  const handleDownload = (image: ImageHistoryItem, e?: React.MouseEvent<HTMLButtonElement>) => {
+  const handleDownload = async (image: ImageHistoryItem, e?: React.MouseEvent<HTMLButtonElement>) => {
     e?.stopPropagation();
-    downloadImage(image.mimeType, image.base64Data, `image-${image.timestamp}.${image.mimeType.split('/')[1]}`);
-    addToast('图片已下载', 'success');
+    let data: string | undefined;
+
+    // 优先使用当前已加载的大图
+    if (selectedImage?.id === image.id && fullResData) {
+        data = fullResData;
+    } else {
+        // 否则异步从 IDB 获取
+        try {
+            data = await getItem(`image_data_${image.id}`);
+        } catch (err) {
+            console.error(err);
+        }
+    }
+
+    if (data) {
+        downloadImage(image.mimeType, data, `image-${image.timestamp}.${image.mimeType.split('/')[1]}`);
+        addToast('图片已下载', 'success');
+    } else {
+        addToast('下载失败：找不到原图', 'error');
+    }
   };
 
   const handleDeleteImage = (image: ImageHistoryItem, e?: React.MouseEvent<HTMLButtonElement>) => {
@@ -174,7 +229,7 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
                   onClick={() => setSelectedImage(image)}
                 >
                   <img
-                    src={`data:${image.mimeType};base64,${image.base64Data}`}
+                    src={`data:${image.mimeType};base64,${image.thumbnailData}`}
                     alt={image.prompt}
                     className="w-full h-full object-cover"
                     loading="lazy"
@@ -247,11 +302,18 @@ export const ImageHistoryPanel: React.FC<Props> = ({ isOpen, onClose }) => {
           >
             {/* Main Image */}
             <div className="relative flex-1 min-h-0 flex items-center justify-center">
-              <img
-                src={`data:${selectedImage.mimeType};base64,${selectedImage.base64Data}`}
-                alt={selectedImage.prompt}
-                className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
-              />
+              {loadingFullRes ? (
+                  <div className="flex flex-col items-center gap-2 text-white">
+                      <Loader2 className="h-8 w-8 animate-spin" />
+                      <span>加载原图中...</span>
+                  </div>
+              ) : (
+                  <img
+                    src={`data:${selectedImage.mimeType};base64,${fullResData || selectedImage.thumbnailData}`}
+                    alt={selectedImage.prompt}
+                    className="max-w-full max-h-[75vh] object-contain rounded-lg shadow-2xl"
+                  />
+              )}
             </div>
 
             {/* Info & Actions */}
