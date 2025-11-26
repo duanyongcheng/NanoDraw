@@ -269,7 +269,7 @@ export const ChatInterface: React.FC = () => {
     <div className="flex flex-col h-full bg-white dark:bg-gray-950 transition-colors duration-200">
       <div 
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 space-y-8 scroll-smooth"
+        className="flex-1 overflow-y-auto px-4 py-6 sm:px-6 space-y-8 scroll-smooth overscroll-y-contain"
       >
         {messages.length === 0 && (
           <div className="flex h-full flex-col items-center justify-center text-center opacity-40 select-none">

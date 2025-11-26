@@ -64,6 +64,10 @@
   animation: var(--animate-fade-out-down);
 }
 
+html {
+  overscroll-behavior-y: none; /* 禁用下拉刷新 (全局) */
+}
+
 body {
   font-family: 'Inter', sans-serif;
   @apply bg-white text-gray-900 dark:bg-gray-950 dark:text-white transition-colors duration-200;
