@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ChatMessage, Part } from '../types';
@@ -108,8 +108,14 @@ const ImageWithDownload: React.FC<{ part: Part; index: number }> = ({ part, inde
   );
 };
 
-const ThinkingBlock: React.FC<{ parts: Part[], duration?: number }> = ({ parts, duration }) => {
-  const [isExpanded, setIsExpanded] = useState(true);
+const ThinkingBlock: React.FC<{ parts: Part[], duration?: number, isFinished: boolean }> = ({ parts, duration, isFinished }) => {
+  const [isExpanded, setIsExpanded] = useState(!isFinished);
+
+  useEffect(() => {
+    if (isFinished) {
+      setIsExpanded(false);
+    }
+  }, [isFinished]);
 
   return (
     <div className="my-2 overflow-hidden rounded-lg border border-gray-200 dark:border-gray-700/50 bg-gray-50 dark:bg-gray-900/30">
@@ -173,7 +179,7 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
   const renderContent = (item: Part | Part[], index: number) => {
     // 1. Handle Thinking Block Group
     if (Array.isArray(item)) {
-      return <ThinkingBlock key={`think-${index}`} parts={item} duration={message.thinkingDuration} />;
+      return <ThinkingBlock key={`think-${index}`} parts={item} duration={message.thinkingDuration} isFinished={!isLast || !isGenerating} />;
     }
     
     const part = item;
