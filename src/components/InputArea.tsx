@@ -137,7 +137,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
   };
 
   return (
-    <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900 p-4 pb-safe transition-colors duration-200">
+    <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4 pb-safe transition-colors duration-200">
       <div className="mx-auto max-w-4xl">
 
         {/* Preview Area */}
