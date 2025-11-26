@@ -1,5 +1,0 @@
-{
-  "name": "Gemini 3 Pro - Frontend Only",
-  "description": "A pure client-side React application interfacing directly with Gemini 3 Pro for advanced multimodal chat and image generation.",
-  "requestFramePermissions": []
-}
