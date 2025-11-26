@@ -298,7 +298,11 @@ export const ChatInterface: React.FC = () => {
         ))}
 
         {showArcade && (
-            <React.Suspense fallback={null}>
+            <React.Suspense fallback={
+                <div className="flex w-full justify-center py-6 fade-in-up">
+                    <div className="w-full max-w-xl h-96 rounded-xl bg-gray-100 dark:bg-gray-900/50 animate-pulse border border-gray-200 dark:border-gray-800"></div>
+                </div>
+            }>
                 <ThinkingIndicator 
                     isThinking={isLoading} 
                     onClose={handleCloseArcade}
