@@ -49,3 +49,13 @@ export interface ImageHistoryItem {
   timestamp: number;
   modelName?: string;
 }
+
+export interface PromptItem {
+  title: string;
+  preview: string;
+  prompt: string;
+  author: string;
+  link: string;
+  mode: 'edit' | 'generate';
+  category: string;
+}

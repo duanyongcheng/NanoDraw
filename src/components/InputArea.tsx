@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Send, ImagePlus, X, Square, Gamepad2 } from 'lucide-react';
+import { Send, ImagePlus, X, Square, Gamepad2, Sparkles } from 'lucide-react';
 import { useAppStore } from '../store/useAppStore';
+import { useUiStore } from '../store/useUiStore';
 import { Attachment } from '../types';
+import { PromptQuickPicker } from './PromptQuickPicker';
 
 interface Props {
   onSend: (text: string, attachments: Attachment[]) => void;
@@ -13,8 +15,10 @@ interface Props {
 
 export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArcadeOpen, disabled }) => {
   const { inputText, setInputText } = useAppStore();
+  const { togglePromptLibrary, isPromptLibraryOpen } = useUiStore();
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isDragging, setIsDragging] = useState(false);
+  const [isQuickPickerOpen, setIsQuickPickerOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const dragCounter = useRef(0);
@@ -130,10 +134,32 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
 
   const handleSubmit = () => {
     if ((!inputText.trim() && attachments.length === 0) || disabled) return;
-    
+
     onSend(inputText, attachments);
     setInputText('');
     setAttachments([]);
+  };
+
+  // 监听输入变化，检测 /t 触发
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setInputText(value);
+
+    // 检测 /t 触发（结尾是 /t 或 /t 后面跟着空格）
+    if (value.endsWith('/t') || value.match(/\/t\s/)) {
+      setIsQuickPickerOpen(true);
+    }
+  };
+
+  // 处理快速选择器选择
+  const handleQuickPickerSelect = (prompt: string) => {
+    // 替换 /t 为实际提示词
+    const newText = inputText.replace(/\/t\s*$/, prompt);
+    setInputText(newText);
+    setIsQuickPickerOpen(false);
+
+    // 聚焦回输入框
+    setTimeout(() => textareaRef.current?.focus(), 100);
   };
 
   return (
@@ -200,12 +226,24 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
             <ImagePlus className="h-5 w-5" />
           </button>
 
+          <button
+            onClick={togglePromptLibrary}
+            className={`mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${
+                isPromptLibraryOpen
+                  ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
+                  : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
+            }`}
+            title={isPromptLibraryOpen ? "关闭提示词库" : "打开提示词库"}
+          >
+            <Sparkles className="h-5 w-5" />
+          </button>
+
           {onOpenArcade && (
             <button
               onClick={onOpenArcade}
               className={`mb-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-xl transition ${
-                  isArcadeOpen 
-                    ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400' 
+                  isArcadeOpen
+                    ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
                     : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-purple-600 dark:hover:text-purple-400'
               }`}
               title={isArcadeOpen ? "关闭 Arcade" : "打开 Arcade"}
@@ -217,7 +255,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
           <textarea
             ref={textareaRef}
             value={inputText}
-            onChange={(e) => setInputText(e.currentTarget.value)}
+            onChange={handleInputChange}
             onKeyDown={handleKeyDown}
             disabled={disabled}
             placeholder="描述一张图片..."
@@ -245,13 +283,20 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
         </div>
         <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
            <span className="hidden sm:inline">
-             回车发送,Shift + 回车换行。支持粘贴、拖拽或点击上传最多 14 张参考图片。
+             回车发送,Shift + 回车换行。支持粘贴、拖拽或点击上传最多 14 张参考图片。输入 <span className="font-mono text-purple-600 dark:text-purple-400">/t</span> 快速选择提示词。
            </span>
            <span className="sm:hidden">
-             点击发送按钮生成图片。支持上传最多 14 张参考图片。
+             点击发送按钮生成图片。支持上传最多 14 张参考图片。输入 <span className="font-mono text-purple-600 dark:text-purple-400">/t</span> 快速选择提示词。
            </span>
         </div>
       </div>
+
+      {/* 快速提示词选择器 */}
+      <PromptQuickPicker
+        isOpen={isQuickPickerOpen}
+        onClose={() => setIsQuickPickerOpen(false)}
+        onSelect={handleQuickPickerSelect}
+      />
     </div>
   );
 };

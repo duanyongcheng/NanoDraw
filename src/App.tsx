@@ -1,19 +1,22 @@
 import React, { useEffect, useState, Suspense } from 'react';
 import { useAppStore } from './store/useAppStore';
+import { useUiStore } from './store/useUiStore';
 import { ChatInterface } from './components/ChatInterface';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { GlobalDialog } from './components/ui/GlobalDialog';
 import { formatBalance } from './services/balanceService';
-import { Settings, Sun, Moon, Github, ImageIcon, DollarSign, Download } from 'lucide-react';
+import { Settings, Sun, Moon, Github, ImageIcon, DollarSign, Download, Sparkles } from 'lucide-react';
 import { lazyWithRetry, preloadComponents } from './utils/lazyLoadUtils';
 
 // Lazy load components
 const ApiKeyModal = lazyWithRetry(() => import('./components/ApiKeyModal').then(module => ({ default: module.ApiKeyModal })));
 const SettingsPanel = lazyWithRetry(() => import('./components/SettingsPanel').then(module => ({ default: module.SettingsPanel })));
 const ImageHistoryPanel = lazyWithRetry(() => import('./components/ImageHistoryPanel').then(module => ({ default: module.ImageHistoryPanel })));
+const PromptLibraryPanel = lazyWithRetry(() => import('./components/PromptLibraryPanel').then(module => ({ default: module.PromptLibraryPanel })));
 
 const App: React.FC = () => {
   const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory, balance, fetchBalance, installPrompt, setInstallPrompt } = useAppStore();
+  const { togglePromptLibrary, isPromptLibraryOpen } = useUiStore();
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -55,6 +58,7 @@ const App: React.FC = () => {
       () => import('./components/ApiKeyModal'),
       () => import('./components/SettingsPanel'),
       () => import('./components/ImageHistoryPanel'),
+      () => import('./components/PromptLibraryPanel'),
       // Also preload components used in ChatInterface
       () => import('./components/ThinkingIndicator'),
       () => import('./components/MessageBubble'),
@@ -185,6 +189,17 @@ const App: React.FC = () => {
               )}
             </button>
             <button
+              onClick={togglePromptLibrary}
+              className={`rounded-lg p-2 transition focus:outline-none focus:ring-2 focus:ring-purple-500 ${
+                isPromptLibraryOpen
+                  ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
+                  : 'text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white'
+              }`}
+              title="提示词库"
+            >
+              <Sparkles className="h-6 w-6" />
+            </button>
+            <button
               onClick={() => updateSettings({ theme: settings.theme === 'dark' ? 'light' : 'dark' })}
               className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               title="切换主题"
@@ -260,6 +275,7 @@ const App: React.FC = () => {
         {isImageHistoryOpen && (
           <ImageHistoryPanel isOpen={isImageHistoryOpen} onClose={() => setIsImageHistoryOpen(false)} />
         )}
+        <PromptLibraryPanel />
       </Suspense>
       <ToastContainer />
       <GlobalDialog />
