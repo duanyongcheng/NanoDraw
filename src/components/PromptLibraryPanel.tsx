@@ -3,7 +3,7 @@ import { X, RefreshCw, Sparkles, ExternalLink, Loader2 } from 'lucide-react';
 import { useUiStore } from '../store/useUiStore';
 import { useAppStore } from '../store/useAppStore';
 import { PromptItem } from '../types';
-import { fetchPrompts, getCategories, getProxiedImageUrl } from '../services/promptService';
+import { fetchPrompts, getCategories } from '../services/promptService';
 
 interface PromptLibraryPanelProps {
   onSelectPrompt?: (prompt: string) => void;
@@ -202,7 +202,7 @@ const PromptCard: React.FC<PromptCardProps> = ({ prompt, onSelect }) => {
               </div>
             )}
             <img
-              src={getProxiedImageUrl(prompt.preview)}
+              src={prompt.preview}
               alt={prompt.title}
               loading="lazy"
               onLoad={() => setImageLoaded(true)}

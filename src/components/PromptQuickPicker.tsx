@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Search, Sparkles, X, ExternalLink } from 'lucide-react';
 import { PromptItem } from '../types';
-import { fetchPrompts, getCategories, getProxiedImageUrl } from '../services/promptService';
+import { fetchPrompts, getCategories } from '../services/promptService';
 
 interface PromptQuickPickerProps {
   isOpen: boolean;
@@ -309,7 +309,7 @@ const PromptDetailPreview: React.FC<PromptDetailPreviewProps> = ({ prompt }) => 
               </div>
             )}
             <img
-              src={getProxiedImageUrl(prompt.preview)}
+              src={prompt.preview}
               alt={prompt.title}
               loading="lazy"
               onLoad={() => setImageLoaded(true)}
