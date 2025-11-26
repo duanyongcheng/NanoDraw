@@ -130,7 +130,7 @@ const App: React.FC = () => {
         </div>
         
         {apiKey && (
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2">
             {/* Balance Display - Desktop only */}
             {balance && (
                 <div 
@@ -148,7 +148,7 @@ const App: React.FC = () => {
             {installPrompt && (
               <button
                 onClick={handleInstallClick}
-                className="hidden sm:flex rounded-lg p-2 text-purple-600 dark:text-purple-400 transition hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-700 dark:hover:text-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="flex rounded-lg p-2 text-purple-600 dark:text-purple-400 transition hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-700 dark:hover:text-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 title="安装应用"
               >
                 <Download className="h-6 w-6" />
