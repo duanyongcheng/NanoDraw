@@ -168,7 +168,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
 
         {/* Preview Area */}
         {attachments.length > 0 && (
-          <div className="flex gap-3 overflow-x-auto pb-3 mb-2">
+          <div className="flex gap-3 overflow-x-auto pt-3 pb-3 px-3 mb-2">
             {attachments.map((att, i) => (
               <div key={i} className="relative h-20 w-20 shrink-0 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 group">
                 <img
