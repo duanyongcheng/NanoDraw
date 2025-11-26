@@ -1,4 +1,4 @@
-import { GoogleGenAI, Content, Part as SDKPart } from "@google/genai";
+import type { Content, Part as SDKPart } from "@google/genai";
 import { AppSettings, Part } from '../types';
 
 // Helper to construct user content
@@ -85,6 +85,7 @@ export const streamGeminiResponse = async function* (
   settings: AppSettings,
   signal?: AbortSignal
 ) {
+  const { GoogleGenAI } = await import("@google/genai");
   const ai = new GoogleGenAI(
     settings.customEndpoint 
       ? { apiKey, httpOptions: { baseUrl: settings.customEndpoint } }
@@ -200,6 +201,7 @@ export const generateContent = async (
   settings: AppSettings,
   signal?: AbortSignal
 ) => {
+  const { GoogleGenAI } = await import("@google/genai");
   const ai = new GoogleGenAI(
     settings.customEndpoint 
       ? { apiKey, httpOptions: { baseUrl: settings.customEndpoint } }

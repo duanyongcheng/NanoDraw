@@ -1,12 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Suspense, lazy } from 'react';
 import { useAppStore } from './store/useAppStore';
-import { ApiKeyModal } from './components/ApiKeyModal';
 import { ChatInterface } from './components/ChatInterface';
-import { SettingsPanel } from './components/SettingsPanel';
-import { ImageHistoryPanel } from './components/ImageHistoryPanel';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { GlobalDialog } from './components/ui/GlobalDialog';
 import { Settings, Sun, Moon, Github, ImageIcon } from 'lucide-react';
+
+// Lazy load components
+const ApiKeyModal = lazy(() => import('./components/ApiKeyModal').then(module => ({ default: module.ApiKeyModal })));
+const SettingsPanel = lazy(() => import('./components/SettingsPanel').then(module => ({ default: module.SettingsPanel })));
+const ImageHistoryPanel = lazy(() => import('./components/ImageHistoryPanel').then(module => ({ default: module.ImageHistoryPanel })));
 
 const App: React.FC = () => {
   const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory } = useAppStore();
@@ -155,15 +157,21 @@ const App: React.FC = () => {
              onClick={(e) => e.stopPropagation()}
            >
               <div className="p-4 w-full">
+                <Suspense fallback={<div className="p-4 text-center text-gray-500">加载中...</div>}>
                   <SettingsPanel />
+                </Suspense>
               </div>
            </div>
         </div>
       </main>
 
       {/* Modals */}
-      {!apiKey && <ApiKeyModal />}
-      <ImageHistoryPanel isOpen={isImageHistoryOpen} onClose={() => setIsImageHistoryOpen(false)} />
+      <Suspense fallback={null}>
+        {!apiKey && <ApiKeyModal />}
+        {isImageHistoryOpen && (
+          <ImageHistoryPanel isOpen={isImageHistoryOpen} onClose={() => setIsImageHistoryOpen(false)} />
+        )}
+      </Suspense>
       <ToastContainer />
       <GlobalDialog />
     </div>
