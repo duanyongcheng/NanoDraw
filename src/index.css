@@ -16,6 +16,12 @@
   --animate-fade-out-down: fadeOutDown 0.2s ease-in forwards;
   
   --animate-spin-slow: spin 3s linear infinite;
+  --animate-attract: attract 2s ease-in-out infinite;
+}
+
+@keyframes attract {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(168, 85, 247, 0)); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 8px rgba(168, 85, 247, 0.5)); }
 }
 
 @keyframes heartbeat {

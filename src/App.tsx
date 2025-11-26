@@ -151,7 +151,7 @@ const App: React.FC = () => {
                 className="flex rounded-lg p-2 text-purple-600 dark:text-purple-400 transition hover:bg-purple-100 dark:hover:bg-purple-900/30 hover:text-purple-700 dark:hover:text-purple-300 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 title="安装应用"
               >
-                <Download className="h-6 w-6" />
+                <Download className="h-6 w-6 animate-attract" />
               </button>
             )}
 
