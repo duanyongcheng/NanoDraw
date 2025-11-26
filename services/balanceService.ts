@@ -32,12 +32,14 @@ export const fetchBalance = async (
     const subscriptionData = await subscriptionRes.json();
     const hardLimitUsd = subscriptionData.hard_limit_usd || 0;
 
-    // 2. 查询使用情况(近100天)
+    // 2. 查询使用情况(近99天 + 1天)
     const now = new Date();
-    const startDate = new Date(now.getTime() - 100 * 24 * 3600 * 1000);
+    const startDate = new Date(now.getTime() - 99 * 24 * 3600 * 1000);
+    const endDate = new Date(now.getTime() + 1 * 24 * 3600 * 1000);
+    
     const pad = (n: number) => n.toString().padStart(2, '0');
     const startDateStr = `${startDate.getFullYear()}-${pad(startDate.getMonth() + 1)}-${pad(startDate.getDate())}`;
-    const endDateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    const endDateStr = `${endDate.getFullYear()}-${pad(endDate.getMonth() + 1)}-${pad(endDate.getDate())}`;
 
     const usageRes = await fetch(
       `${baseUrl}/v1/dashboard/billing/usage?start_date=${startDateStr}&end_date=${endDateStr}`,
