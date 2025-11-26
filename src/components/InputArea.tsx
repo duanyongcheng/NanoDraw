@@ -64,7 +64,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
 
   useEffect(() => {
     const handlePaste = (event: ClipboardEvent) => {
-      if (disabled) return;
+      if (disabled || attachments.length >= 14) return;
 
       const clipboardData = event.clipboardData;
       if (!clipboardData) return;
@@ -82,7 +82,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
 
     window.addEventListener('paste', handlePaste);
     return () => window.removeEventListener('paste', handlePaste);
-  }, [disabled, processFiles]);
+  }, [disabled, processFiles, attachments.length]);
 
   const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
