@@ -152,7 +152,7 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
             <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-blue-500/10 backdrop-blur-sm border-2 border-dashed border-blue-500">
               <div className="flex flex-col items-center gap-2 text-blue-600 dark:text-blue-400">
                 <ImagePlus className="h-8 w-8" />
-                <span className="text-sm font-medium">松开以上传图片</span>
+                <span className="text-sm font-medium">松开鼠标以上传图片</span>
               </div>
             </div>
           )}

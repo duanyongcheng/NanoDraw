@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import { AppSettings, ChatMessage, Content, Part, ImageHistoryItem } from '../types';
+import { AppSettings, ChatMessage, Part, ImageHistoryItem } from '../types';
 
 interface AppState {
   apiKey: string | null;

@@ -35,8 +35,9 @@ export const fetchBalance = async (
     // 2. 查询使用情况(近100天)
     const now = new Date();
     const startDate = new Date(now.getTime() - 100 * 24 * 3600 * 1000);
-    const startDateStr = `${startDate.getFullYear()}-${startDate.getMonth() + 1}-${startDate.getDate()}`;
-    const endDateStr = `${now.getFullYear()}-${now.getMonth() + 1}-${now.getDate()}`;
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const startDateStr = `${startDate.getFullYear()}-${pad(startDate.getMonth() + 1)}-${pad(startDate.getDate())}`;
+    const endDateStr = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
 
     const usageRes = await fetch(
       `${baseUrl}/v1/dashboard/billing/usage?start_date=${startDateStr}&end_date=${endDateStr}`,

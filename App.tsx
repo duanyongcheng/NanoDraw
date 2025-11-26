@@ -6,7 +6,7 @@ import { SettingsPanel } from './components/SettingsPanel';
 import { ImageHistoryPanel } from './components/ImageHistoryPanel';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { GlobalDialog } from './components/ui/GlobalDialog';
-import { Settings, MessageSquare, AlertCircle, Sun, Moon, Monitor, Github, ImageIcon } from 'lucide-react';
+import { Settings, Sun, Moon, Github, ImageIcon } from 'lucide-react';
 
 const App: React.FC = () => {
   const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory } = useAppStore();

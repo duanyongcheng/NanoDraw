@@ -16,7 +16,6 @@ const downloadImage = (mimeType: string, base64Data: string, filename: string) =
 
   const link = document.createElement('a');
   link.href = url;
-  const extension = mimeType.split('/')[1] || 'png';
   link.download = filename;
   document.body.appendChild(link);
   link.click();

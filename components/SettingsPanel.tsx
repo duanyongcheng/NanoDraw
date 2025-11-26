@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
-import { X, LogOut, Trash2, Sun, Moon, Monitor, Share2, Bookmark, DollarSign, RefreshCw } from 'lucide-react';
+import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw } from 'lucide-react';
 import { fetchBalance, formatBalance, BalanceInfo } from '../services/balanceService';
 
 export const SettingsPanel: React.FC = () => {
