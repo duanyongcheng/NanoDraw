@@ -41,7 +41,9 @@ interface AppState {
   isSettingsOpen: boolean;
   inputText: string; // Global input text state
   balance: BalanceInfo | null;
+  installPrompt: any | null; // PWA Install Prompt Event
 
+  setInstallPrompt: (prompt: any) => void;
   setApiKey: (key: string) => void;
   fetchBalance: () => Promise<void>;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
@@ -79,7 +81,9 @@ export const useAppStore = create<AppState>()(
       isSettingsOpen: window.innerWidth > 640, // Open by default only on desktop (sm breakpoint)
       inputText: '',
       balance: null,
+      installPrompt: null,
 
+      setInstallPrompt: (prompt) => set({ installPrompt: prompt }),
       setApiKey: (key) => set({ apiKey: key }),
 
       fetchBalance: async () => {
