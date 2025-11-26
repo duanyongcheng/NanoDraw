@@ -222,7 +222,12 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
           )}
         </div>
         <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
-           回车发送,Shift + 回车换行。支持拖拽或点击上传最多 14 张参考图片。
+           <span className="hidden sm:inline">
+             回车发送,Shift + 回车换行。支持拖拽或点击上传最多 14 张参考图片。
+           </span>
+           <span className="sm:hidden">
+             点击发送按钮生成图片。支持点击上传最多 14 张参考图片。
+           </span>
         </div>
       </div>
     </div>
