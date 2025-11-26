@@ -98,8 +98,8 @@ const App: React.FC = () => {
       if (isDark) {
         root.classList.add('dark');
         // Update theme-color for PWA/Browser bar
-        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: dark)"]')?.setAttribute('content', '#030712');
-        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: light)"]')?.setAttribute('content', '#030712');
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: dark)"]')?.setAttribute('content', '#111827');
+        document.querySelector('meta[name="theme-color"][media="(prefers-color-scheme: light)"]')?.setAttribute('content', '#111827');
       } else {
         root.classList.remove('dark');
         // Update theme-color for PWA/Browser bar
