@@ -11,6 +11,13 @@ lerna-debug.log*
 node_modules
 .pnp
 .pnp.js
+.pnp.*
+.yarn/
+
+# Lock files (only bun.lock is allowed)
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
 
 # Testing
 coverage

@@ -10,7 +10,10 @@
     "preview": "vite preview"
   },
   "engines": {
-    "bun": ">=1.2.1"
+    "bun": ">=1.2.1",
+    "npm": "please-use-bun",
+    "yarn": "please-use-bun",
+    "pnpm": "please-use-bun"
   },
   "dependencies": {
     "@google/genai": "^1.30.0",
