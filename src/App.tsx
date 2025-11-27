@@ -16,7 +16,7 @@ const PromptLibraryPanel = lazyWithRetry(() => import('./components/PromptLibrar
 
 const App: React.FC = () => {
   const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory, balance, fetchBalance, installPrompt, setInstallPrompt } = useAppStore();
-  const { togglePromptLibrary, isPromptLibraryOpen } = useUiStore();
+  const { togglePromptLibrary, isPromptLibraryOpen, showDialog, addToast } = useUiStore();
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -80,15 +80,38 @@ const App: React.FC = () => {
     const urlEndpoint = params.get('endpoint');
     const urlModel = params.get('model');
 
-    if (urlEndpoint || urlModel) {
-      updateSettings({
-        ...(urlEndpoint ? { customEndpoint: urlEndpoint } : {}),
-        ...(urlModel ? { modelName: urlModel } : {}),
-      });
-    }
+    if (urlApiKey || urlEndpoint || urlModel) {
+        let message = "检测到 URL 中包含新的配置参数：\n\n";
+        if (urlApiKey) message += `- API Key: (已隐藏)\n`;
+        if (urlEndpoint) message += `- 接口地址: ${urlEndpoint}\n`;
+        if (urlModel) message += `- 模型: ${urlModel}\n`;
+        
+        message += "\n是否应用这些设置？这将覆盖您当前的配置。";
 
-    if (urlApiKey) {
-      setApiKey(urlApiKey);
+        showDialog({
+            type: 'confirm',
+            title: '应用外部配置',
+            message: message,
+            confirmLabel: '应用并保存',
+            onConfirm: () => {
+                if (urlEndpoint || urlModel) {
+                    updateSettings({
+                        ...(urlEndpoint ? { customEndpoint: urlEndpoint } : {}),
+                        ...(urlModel ? { modelName: urlModel } : {}),
+                    });
+                }
+            
+                if (urlApiKey) {
+                    setApiKey(urlApiKey);
+                }
+
+                // Clean up URL
+                const newUrl = window.location.pathname;
+                window.history.replaceState({}, '', newUrl);
+                
+                addToast('配置已更新', 'success');
+            }
+        });
     }
   }, []);
 
