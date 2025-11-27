@@ -144,13 +144,15 @@ export const streamGeminiResponse = async function* (
       model: settings.modelName || "gemini-3-pro-image-preview",
       contents: contentsPayload,
       config: {
-        imageConfig: {
-          imageSize: settings.resolution,
-          ...(settings.aspectRatio !== 'Auto' ? { aspectRatio: settings.aspectRatio } : {}),
-        },
-        tools: settings.useGrounding ? [{ googleSearch: {} }] : [],
+        ...(settings.isPro ? {
+          imageConfig: {
+            imageSize: settings.resolution,
+            ...(settings.aspectRatio !== 'Auto' ? { aspectRatio: settings.aspectRatio } : {}),
+          },
+          tools: settings.useGrounding ? [{ googleSearch: {} }] : [],
+        } : {}),
         responseModalities: ["TEXT", "IMAGE"],
-        ...(settings.enableThinking ? {
+        ...(settings.isPro && settings.enableThinking ? {
             thinkingConfig: {
                 includeThoughts: true,
             }
@@ -263,13 +265,15 @@ export const generateContent = async (
       model: settings.modelName || "gemini-3-pro-image-preview",
       contents: contentsPayload,
       config: {
-        imageConfig: {
-          imageSize: settings.resolution,
-          ...(settings.aspectRatio !== 'Auto' ? { aspectRatio: settings.aspectRatio } : {}),
-        },
-        tools: settings.useGrounding ? [{ googleSearch: {} }] : [],
+        ...(settings.isPro ? {
+          imageConfig: {
+            imageSize: settings.resolution,
+            ...(settings.aspectRatio !== 'Auto' ? { aspectRatio: settings.aspectRatio } : {}),
+          },
+          tools: settings.useGrounding ? [{ googleSearch: {} }] : [],
+        } : {}),
         responseModalities: ["TEXT", "IMAGE"],
-        ...(settings.enableThinking ? {
+        ...(settings.isPro && settings.enableThinking ? {
             thinkingConfig: {
                 includeThoughts: true,
             }

@@ -61,6 +61,7 @@ export const useAppStore = create<AppState>()(
         customEndpoint: 'https://undyapi.com',
         modelName: 'gemini-3-pro-image-preview',
         theme: 'system',
+        isPro: true,
       },
       messages: [],
       imageHistory: [], // 初始化图片历史记录

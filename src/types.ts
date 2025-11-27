@@ -7,6 +7,7 @@ export interface AppSettings {
   customEndpoint?: string;
   modelName?: string;
   theme: 'light' | 'dark' | 'system';
+  isPro: boolean;
 }
 
 export interface Part {

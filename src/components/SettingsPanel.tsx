@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
-import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw, Download } from 'lucide-react';
+import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw, Download, Zap } from 'lucide-react';
 import { formatBalance } from '../services/balanceService';
 
 export const SettingsPanel: React.FC = () => {
@@ -144,8 +144,30 @@ export const SettingsPanel: React.FC = () => {
           </section>
         )}
 
+        {/* Pro Mode Toggle */}
+        <section>
+          <label className="flex items-center justify-between cursor-pointer group">
+            <div className="flex items-center gap-2">
+                <Zap className={`h-4 w-4 ${settings.isPro ? 'text-amber-500' : 'text-gray-400'}`} />
+                <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Pro 模式</span>
+            </div>
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={settings.isPro}
+                onChange={(e) => updateSettings({ isPro: (e.target as HTMLInputElement).checked })}
+                className="sr-only peer"
+              />
+              <div className="h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-800 peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:bg-blue-600 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+            </div>
+          </label>
+          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+            启用高级功能，包括高分辨率图像、Google 搜索定位和思考过程。
+          </p>
+        </section>
+
         {/* Resolution */}
-        <section className='mb-4'>
+        <section className={`mb-4 transition-opacity duration-200 ${!settings.isPro ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">图像分辨率</label>
           <div className="grid grid-cols-3 gap-2">
             {(['1K', '2K', '4K'] as const).map((res) => (
@@ -171,7 +193,7 @@ export const SettingsPanel: React.FC = () => {
         </section>
 
         {/* Aspect Ratio */}
-        <section>
+        <section className={`transition-opacity duration-200 ${!settings.isPro ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
           <label className="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-3">长宽比</label>
           <div className="grid grid-cols-3 gap-2">
             {(['Auto', '1:1', '3:4', '4:3', '9:16', '16:9'] as const).map((ratio) => {
@@ -208,7 +230,7 @@ export const SettingsPanel: React.FC = () => {
         </section>
 
         {/* Grounding */}
-        <section>
+        <section className={`transition-opacity duration-200 ${!settings.isPro ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
           <label className="flex items-center justify-between cursor-pointer group">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">Google 搜索定位</span>
             <div className="relative">
@@ -227,7 +249,7 @@ export const SettingsPanel: React.FC = () => {
         </section>
 
         {/* Thinking Process */}
-        <section>
+        <section className={`transition-opacity duration-200 ${!settings.isPro ? 'opacity-50 pointer-events-none grayscale' : ''}`}>
           <label className="flex items-center justify-between cursor-pointer group">
             <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">显示思考过程</span>
             <div className="relative">
