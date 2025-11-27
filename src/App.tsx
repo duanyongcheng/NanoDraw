@@ -80,11 +80,17 @@ const App: React.FC = () => {
     const urlEndpoint = params.get('endpoint');
     const urlModel = params.get('model');
 
-    if (urlApiKey || urlEndpoint || urlModel) {
+    // Check if parameters are actually different from current settings
+    const isDifferent =
+        (urlApiKey && urlApiKey !== apiKey) ||
+        (urlEndpoint && urlEndpoint !== settings.customEndpoint) ||
+        (urlModel && urlModel !== settings.modelName);
+
+    if ((urlApiKey || urlEndpoint || urlModel) && isDifferent) {
         let message = "检测到 URL 中包含新的配置参数：\n\n";
-        if (urlApiKey) message += `- API Key: (已隐藏)\n`;
-        if (urlEndpoint) message += `- 接口地址: ${urlEndpoint}\n`;
-        if (urlModel) message += `- 模型: ${urlModel}\n`;
+        if (urlApiKey && urlApiKey !== apiKey) message += `- API Key: (已隐藏)\n`;
+        if (urlEndpoint && urlEndpoint !== settings.customEndpoint) message += `- 接口地址: ${urlEndpoint}\n`;
+        if (urlModel && urlModel !== settings.modelName) message += `- 模型: ${urlModel}\n`;
         
         message += "\n是否应用这些设置？这将覆盖您当前的配置。";
 
@@ -112,6 +118,10 @@ const App: React.FC = () => {
                 addToast('配置已更新', 'success');
             }
         });
+    } else if (urlApiKey || urlEndpoint || urlModel) {
+        // If parameters exist but are same as current, just clean up URL silently
+        const newUrl = window.location.pathname;
+        window.history.replaceState({}, '', newUrl);
     }
   }, []);
 
