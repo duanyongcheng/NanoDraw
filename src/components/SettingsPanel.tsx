@@ -92,7 +92,8 @@ export const SettingsPanel: React.FC = () => {
         </button>
       </div>
 
-      <div className="space-y-8 flex-1">
+      <div className="flex-1 flex flex-col overflow-y-auto -mx-4 px-4">
+        <div className="space-y-8">
         {/* Balance Section */}
         {apiKey && (
           <section className="p-4 rounded-xl bg-linear-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border border-blue-200 dark:border-blue-800">
@@ -342,8 +343,10 @@ export const SettingsPanel: React.FC = () => {
              </a>
            </div>
         </section>
+        </div>
 
         {/* Data Management */}
+        <div className="mt-auto pt-8">
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
             <button
                 onClick={() => {
@@ -389,6 +392,7 @@ export const SettingsPanel: React.FC = () => {
         <div className="mt-1 pb-4 text-center text-[10px] text-gray-400 dark:text-gray-600 space-y-1">
            <p>模型: {settings.modelName || 'gemini-3-pro-image-preview'}</p>
            <p className="truncate px-4">接口地址: {settings.customEndpoint || 'https://undyapi.com'}</p>
+        </div>
         </div>
       </div>
     </div>
