@@ -14,7 +14,7 @@ interface Props {
 }
 
 export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArcadeOpen, disabled }) => {
-  const { inputText, setInputText } = useAppStore();
+  const { inputText, setInputText, settings } = useAppStore();
   const { togglePromptLibrary, isPromptLibraryOpen } = useUiStore();
   const [attachments, setAttachments] = useState<Attachment[]>([]);
   const [isDragging, setIsDragging] = useState(false);
@@ -27,9 +27,27 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
     // Check if device is likely mobile/tablet based on screen width
     const isMobile = window.innerWidth < 768;
 
-    if (e.key === 'Enter' && !e.shiftKey && !isMobile) {
-      e.preventDefault();
-      handleSubmit();
+    // 如果正在使用输入法（IME），不处理 Enter 键
+    // keyCode 229 是 IME 输入中的标志，isComposing 是标准属性
+    if ((e as any).isComposing || e.keyCode === 229) {
+      return;
+    }
+
+    if (e.key === 'Enter' && !isMobile) {
+      if (settings.sendWithModifier) {
+        // 需要 Cmd/Ctrl+Enter 发送
+        if (e.metaKey || e.ctrlKey) {
+          e.preventDefault();
+          handleSubmit();
+        }
+        // 否则让 Enter 正常换行
+      } else {
+        // Enter 发送，Shift+Enter 换行
+        if (!e.shiftKey) {
+          e.preventDefault();
+          handleSubmit();
+        }
+      }
     }
   };
 
@@ -283,7 +301,11 @@ export const InputArea: React.FC<Props> = ({ onSend, onStop, onOpenArcade, isArc
         </div>
         <div className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
            <span className="hidden sm:inline">
-             回车发送,Shift + 回车换行。支持粘贴、拖拽或点击上传最多 14 张参考图片。输入 <span className="font-mono text-purple-600 dark:text-purple-400">/t</span> 快速选择提示词。
+             {settings.sendWithModifier 
+               ? `${navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+回车发送，回车换行。`
+               : '回车发送，Shift+回车换行。'
+             }
+             支持粘贴、拖拽或点击上传最多 14 张参考图片。输入 <span className="font-mono text-purple-600 dark:text-purple-400">/t</span> 快速选择提示词。
            </span>
            <span className="sm:hidden">
              点击发送按钮生成图片。支持上传最多 14 张参考图片。

@@ -303,6 +303,27 @@ export const SettingsPanel: React.FC = () => {
              逐个 token 流式传输模型的响应。对于一次性响应请禁用。
           </p>
         </section>
+
+        {/* Send Shortcut */}
+        <section>
+          <label className="flex items-center justify-between cursor-pointer group">
+            <span className="text-sm font-medium text-gray-500 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">
+              {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+Enter 发送
+            </span>
+            <div className="relative">
+              <input
+                type="checkbox"
+                checked={settings.sendWithModifier}
+                onChange={(e) => updateSettings({ sendWithModifier: (e.target as HTMLInputElement).checked })}
+                className="sr-only peer"
+              />
+              <div className="h-6 w-11 rounded-full bg-gray-200 dark:bg-gray-800 peer-focus:ring-2 peer-focus:ring-blue-500/50 peer-checked:bg-blue-600 transition-colors after:absolute after:left-0.5 after:top-0.5 after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full"></div>
+            </div>
+          </label>
+          <p className="mt-2 text-xs text-gray-400 dark:text-gray-500">
+            启用后需要按 {navigator.platform.includes('Mac') ? '⌘' : 'Ctrl'}+Enter 发送消息，Enter 键仅换行。适合使用中文输入法的用户。
+          </p>
+        </section>
         
         {/* App Installation */}
         {installPrompt && (

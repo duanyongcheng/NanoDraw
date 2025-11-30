@@ -62,6 +62,7 @@ export const useAppStore = create<AppState>()(
         modelName: 'gemini-3-pro-image-preview',
         theme: 'system',
         isPro: true,
+        sendWithModifier: false, // 默认 Enter 发送
       },
       messages: [],
       imageHistory: [], // 初始化图片历史记录
