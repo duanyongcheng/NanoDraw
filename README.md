@@ -241,7 +241,7 @@ http://localhost:3000/?endpoint=https://my-proxy.com&model=gemini-2.0-flash
 AGPL-3.0
 > [!CAUTION]
 > ### 违反许可协议的项目
-> - [酷爱API](https://cnb.kuai.host)
+> - [酷爱API](https://cnb.kuai.host)：[互联网档案馆于20251203094750抓取的网页内容](https://web.archive.org/web/20251203094750/https://cnb.kuai.host/)
 
 ## 🙏 致谢
 
