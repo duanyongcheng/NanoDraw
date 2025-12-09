@@ -35,19 +35,19 @@ const App: React.FC = () => {
 
   const handleInstallClick = async () => {
     if (!installPrompt) return;
-    
+
     // Show the install prompt
     installPrompt.prompt();
-    
+
     // Wait for the user to respond to the prompt
     const { outcome } = await installPrompt.userChoice;
-    
+
     if (outcome === 'accepted') {
       console.log('User accepted the install prompt');
     } else {
       console.log('User dismissed the install prompt');
     }
-    
+
     // We've used the prompt, and can't use it again, throw it away
     setInstallPrompt(null);
   };
@@ -91,7 +91,7 @@ const App: React.FC = () => {
         if (urlApiKey && urlApiKey !== apiKey) message += `- API Key: (已隐藏)\n`;
         if (urlEndpoint && urlEndpoint !== settings.customEndpoint) message += `- 接口地址: ${urlEndpoint}\n`;
         if (urlModel && urlModel !== settings.modelName) message += `- 模型: ${urlModel}\n`;
-        
+
         message += "\n是否应用这些设置？这将覆盖您当前的配置。";
 
         showDialog({
@@ -106,7 +106,7 @@ const App: React.FC = () => {
                         ...(urlModel ? { modelName: urlModel } : {}),
                     });
                 }
-            
+
                 if (urlApiKey) {
                     setApiKey(urlApiKey);
                 }
@@ -114,7 +114,7 @@ const App: React.FC = () => {
                 // Clean up URL
                 const newUrl = window.location.pathname;
                 window.history.replaceState({}, '', newUrl);
-                
+
                 addToast('配置已更新', 'success');
             }
         });
@@ -129,7 +129,7 @@ const App: React.FC = () => {
   useEffect(() => {
     const root = window.document.documentElement;
     const systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
-    
+
     const applyTheme = () => {
       const isDark = settings.theme === 'dark' || (settings.theme === 'system' && systemTheme.matches);
       if (isDark) {
@@ -157,9 +157,9 @@ const App: React.FC = () => {
       {/* Header */}
       <header className="flex items-center justify-between border-b border-gray-200 dark:border-gray-800 bg-white/50 dark:bg-gray-950/50 px-6 py-4 backdrop-blur-md z-10 transition-colors duration-200">
         <div className="flex items-center gap-3">
-          <a 
-            href="https://undyapi.com" 
-            target="_blank" 
+          <a
+            href="https://undyapi.com"
+            target="_blank"
             rel="noopener noreferrer"
             className="flex h-10 w-10 items-center justify-center overflow-hidden hover:opacity-80 transition-opacity"
           >
@@ -167,17 +167,14 @@ const App: React.FC = () => {
           </a>
           <div className="hidden sm:block">
             <h1 className="text-lg font-bold tracking-tight text-gray-900 dark:text-white">Nano Banana Pro</h1>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              由 <a href="https://undyapi.com" target="_blank" rel="noopener noreferrer" className="hover:text-blue-500 hover:underline transition-colors">Undy API</a> 赞助联合开发
-            </p>
           </div>
         </div>
-        
+
         {apiKey && (
           <div className="flex items-center gap-1 sm:gap-2">
             {/* Balance Display - Desktop only */}
             {balance && (
-                <div 
+                <div
                     onClick={() => fetchBalance()}
                     className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300 cursor-pointer hover:bg-gray-200 dark:hover:bg-gray-700 transition mr-2"
                     title="点击刷新余额"
@@ -258,19 +255,19 @@ const App: React.FC = () => {
         </div>
 
         {/* Settings Sidebar (Desktop/Mobile Overlay) */}
-        <div 
+        <div
           className={`
             absolute inset-0 z-20 flex justify-end
             transition-all duration-300 ease-in-out
-            ${isSettingsOpen 
-              ? 'bg-black/50 backdrop-blur-sm pointer-events-auto' 
+            ${isSettingsOpen
+              ? 'bg-black/50 backdrop-blur-sm pointer-events-auto'
               : 'bg-transparent backdrop-blur-none pointer-events-none'
             }
-            
+
             sm:static sm:z-auto sm:bg-transparent sm:backdrop-blur-none sm:pointer-events-auto sm:overflow-hidden
             sm:transition-[width,border-color]
-            ${isSettingsOpen 
-              ? 'sm:w-80 sm:border-l sm:border-gray-200 dark:sm:border-gray-800' 
+            ${isSettingsOpen
+              ? 'sm:w-80 sm:border-l sm:border-gray-200 dark:sm:border-gray-800'
               : 'sm:w-0 sm:border-l-0 sm:border-transparent'
             }
           `}
@@ -281,12 +278,12 @@ const App: React.FC = () => {
             }
           }}
         >
-           <div 
+           <div
              className={`
-               w-full h-full sm:w-80 bg-white dark:bg-gray-950 
+               w-full h-full sm:w-80 bg-white dark:bg-gray-950
                shadow-2xl sm:shadow-none
                overflow-y-auto overflow-x-hidden border-l border-gray-200 dark:border-gray-800 sm:border-none
-               
+
                transition-transform duration-300 ease-in-out
                ${isSettingsOpen ? 'translate-x-0' : 'translate-x-full'}
                sm:translate-x-0

@@ -254,8 +254,3 @@ AGPL-3.0
 > [!CAUTION]
 > ### 违反许可协议的项目
 > - [酷爱API](https://cnb.kuai.host)：[互联网档案馆于20251203094750抓取的网页内容](https://web.archive.org/web/20251203094750/https://cnb.kuai.host/)
-
-## 🙏 致谢
-
-- 原项目：[faithleysath/UndyDraw](https://github.com/faithleysath/UndyDraw)
-- API 赞助：[Undy API](https://undyapi.com)
