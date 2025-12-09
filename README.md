@@ -2,6 +2,8 @@
 
 这是一个基于 React 的现代化纯前端应用，专为与 Google 的 **Gemini 3 Pro** 模型交互而设计。它提供了一个流畅的聊天界面，支持多模态输入，并在等待 AI 思考时提供趣味性的互动体验。
 
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/deijing/UndyDraw)
+
 ## ✨ 主要特性
 
 ### 🎨 核心功能
