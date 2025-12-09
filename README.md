@@ -92,8 +92,8 @@
 
 ### 前置要求
 
-- Node.js (建议 v18 或更高版本)
-- **Bun** (>= 1.2.1) - 本项目强制使用 Bun 作为包管理器
+- Node.js >= 18
+- **Bun** (>= 1.2.1) 或 **pnpm** (>= 8)
 - Google Gemini API Key ([在此获取](https://aistudio.google.com/app/apikey))
 
 ### 安装与运行
@@ -107,16 +107,22 @@
 
 2. **安装依赖**
 
-   > 本项目配置了 `preinstall` 钩子，强制使用 `bun` 安装依赖。
-
    ```bash
+   # 使用 Bun
    bun install
+
+   # 或使用 pnpm
+   pnpm install
    ```
 
 3. **启动开发服务器**
 
    ```bash
+   # 使用 Bun
    bun dev
+
+   # 或使用 pnpm
+   pnpm dev
    ```
 
    启动后，在浏览器访问控制台输出的地址（通常是 `http://localhost:3000`）。
@@ -124,7 +130,11 @@
 4. **构建生产版本**
 
    ```bash
+   # 使用 Bun
    bun build
+
+   # 或使用 pnpm
+   pnpm build
    ```
 
 ## ⚙️ 使用说明

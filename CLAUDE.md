@@ -9,17 +9,25 @@ NanoDraw (branded as "Nano Banana Pro") is a frontend-only React web application
 ## Development Commands
 
 ```bash
-# Install dependencies (Bun is enforced - npm/yarn/pnpm blocked)
+# Install dependencies (Bun or pnpm)
 bun install
+# or
+pnpm install
 
 # Development server (localhost:3000)
 bun dev
+# or
+pnpm dev
 
 # Production build
 bun build
+# or
+pnpm build
 
 # Preview production build
 bun preview
+# or
+pnpm preview
 ```
 
 ## Tech Stack
