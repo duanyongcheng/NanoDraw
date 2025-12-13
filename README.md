@@ -29,6 +29,11 @@
   - 支持思维链中的图片下载
   - 自动命名：`gemini-image-{时间戳}.{扩展名}`
 
+- **URL 图片支持**：
+  - 支持第三方 API 返回的 URL 图片链接
+  - 自动解析 Markdown 图片语法 `![alt](url)`
+  - URL 图片同样支持悬停下载
+
 - **图片历史记录**：
   - 自动收集所有生成的图片（最多保留 100 张）
   - 网格预览布局，支持按提示词搜索
@@ -81,6 +86,13 @@
 - 完美支持代码块高亮
 - 支持表格、列表、引用等富文本格式
 - 支持 GFM (GitHub Flavored Markdown)
+
+### 🔌 第三方 API 兼容
+
+- **自动适配**：智能检测并适配非标准 API 响应格式
+- **SSE 支持**：支持 Server-Sent Events 流式响应解析
+- **自定义格式**：兼容 `{ body: { content } }` 和 `{ modelOutput: { text } }` 等格式
+- **图片链接解析**：自动从响应中解析 Markdown 图片链接
 
 ### ⚙️ 高度可配置
 
@@ -253,6 +265,7 @@ src/
 │   └── ErrorBoundary.tsx    # 错误边界
 ├── services/                # 服务层
 │   ├── geminiService.ts     # Google GenAI SDK 集成
+│   ├── customApiAdapter.ts  # 第三方 API 兼容适配器
 │   ├── balanceService.ts    # API 余额查询服务
 │   └── promptService.ts     # 提示词库服务
 ├── store/                   # 状态管理
@@ -275,9 +288,11 @@ src/
 | 多模态输入 | 文本 + 最多 14 张图片 |
 | 图片上传 | 点击 + 拖拽 + 粘贴 |
 | 图片下载 | 悬停一键下载 |
+| URL 图片 | 支持第三方 API 图片链接 |
 | 图片历史 | 自动收集 + 搜索 + 预览 |
 | 提示词库 | 1000+ 精选提示词 |
 | API 余额 | 实时查询显示 |
+| 第三方 API | 自动适配非标准格式 |
 | 等待小游戏 | 4 款经典游戏 |
 | PWA 支持 | 可安装为独立应用 |
 
