@@ -34,6 +34,39 @@ const ThinkingContentItem: React.FC<{ part: Part }> = ({ part }) => {
     );
   }
 
+  // 支持 URL 图片
+  if (part.imageUrl) {
+    return (
+      <div
+        className="relative my-2 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700/50 bg-gray-100 dark:bg-black/20 max-w-sm mx-auto group"
+        onMouseEnter={() => setIsImageHovered(true)}
+        onMouseLeave={() => setIsImageHovered(false)}
+      >
+        <img
+          src={part.imageUrl}
+          alt="Thinking process sketch"
+          className="h-auto max-w-full object-contain opacity-80 hover:opacity-100 transition cursor-pointer"
+          loading="lazy"
+          onClick={() => window.open(part.imageUrl, '_blank')}
+          title="点击查看大图"
+        />
+
+        {/* Download Button */}
+        <a
+          href={part.imageUrl}
+          download
+          onClick={(e) => e.stopPropagation()}
+          className={`absolute top-2 right-2 p-2 rounded-lg bg-black/60 hover:bg-black/80 text-white shadow-lg backdrop-blur-sm transition-all ${
+            isImageHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+          title="下载图片"
+        >
+          <Download className="h-4 w-4" />
+        </a>
+      </div>
+    );
+  }
+
   if (part.inlineData) {
      return (
         <div
@@ -72,6 +105,40 @@ const ThinkingContentItem: React.FC<{ part: Part }> = ({ part }) => {
 
 const ImageWithDownload: React.FC<{ part: Part; index: number }> = ({ part, index }) => {
   const [isImageHovered, setIsImageHovered] = useState(false);
+
+  // 支持 URL 图片
+  if (part.imageUrl) {
+    return (
+      <div
+        key={index}
+        className="relative mt-3 overflow-hidden rounded-xl border border-gray-200 dark:border-gray-700/50 bg-white dark:bg-gray-950/50 max-w-lg mx-auto group"
+        onMouseEnter={() => setIsImageHovered(true)}
+        onMouseLeave={() => setIsImageHovered(false)}
+      >
+        <img
+          src={part.imageUrl}
+          alt="Generated or uploaded content"
+          className="h-auto max-w-full object-contain cursor-pointer"
+          loading="lazy"
+          onClick={() => window.open(part.imageUrl, '_blank')}
+          title="点击查看大图"
+        />
+
+        {/* Download Button */}
+        <a
+          href={part.imageUrl}
+          download
+          onClick={(e) => e.stopPropagation()}
+          className={`absolute top-3 right-3 p-2.5 rounded-lg bg-black/60 hover:bg-black/80 text-white shadow-lg backdrop-blur-sm transition-all ${
+            isImageHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+          title="下载图片"
+        >
+          <Download className="h-5 w-5" />
+        </a>
+      </div>
+    );
+  }
 
   if (!part.inlineData) return null;
 
@@ -235,9 +302,9 @@ export const MessageBubble: React.FC<Props> = ({ message, isLast, isGenerating, 
         </div>
       );
     }
-    
-    // 3. Handle Images
-    if (part.inlineData) {
+
+    // 3. Handle Images (URL or Base64)
+    if (part.inlineData || part.imageUrl) {
       return <ImageWithDownload key={index} part={part} index={index} />;
     }
     return null;

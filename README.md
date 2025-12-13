@@ -1,6 +1,6 @@
 # Gemini 3 Pro Client (Frontend Only)
 
-这是一个基于 React 的现代化纯前端应用，专为与 Google 的 **Gemini 3 Pro** 模型交互而设计。它提供了一个流畅的聊天界面，支持多模态输入，并在等待 AI 思考时提供趣味性的互动体验。
+这是一个基于 React 的现代化纯前端应用，专为与 Google 的 **Gemini 3 Pro** 模型交互而设计。它提供了一个流畅的聊天界面，支持多模态输入（文本 + 图片），内置 1000+ 精选提示词库，并在等待 AI 思考时提供趣味性的小游戏体验。支持 PWA 安装为独立应用。
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/deijing/UndyDraw)
 
@@ -8,34 +8,43 @@
 
 ### 🎨 核心功能
 
-- **纯前端架构**：基于 React 19 + Vite 6 构建，无需后端服务器，直接在浏览器中运行
+- **纯前端架构**：基于 React 19 + Vite 7 构建，无需后端服务器，直接在浏览器中运行
+- **PWA 支持**：可安装为独立应用，支持离线访问
 - **Gemini 3 Pro 支持**：默认配置为 `gemini-3-pro-image-preview` 模型，支持最新的 AI 能力
 - **多模态交互**：
   - 支持文本对话
   - 支持图片上传与分析（最多支持 14 张参考图片）
   - 支持在页面任意位置粘贴剪贴板图片，自动加入参考图列表
-  - **✨ 拖拽上传**：支持将图片直接拖拽到输入框上传，无需点击按钮
+  - **拖拽上传**：支持将图片直接拖拽到输入框上传，无需点击按钮
 
-### 🖼️ 图片功能 (新增)
+### 🖼️ 图片功能
 
-- **📥 拖拽上传**：
+- **拖拽上传**：
   - 将图片拖拽到输入框区域即可上传
   - 拖拽时显示蓝色高亮边框提示
   - 支持同时拖拽多张图片
 
-- **💾 一键下载**：
+- **一键下载**：
   - 生成的图片悬停显示下载按钮
   - 支持思维链中的图片下载
   - 自动命名：`gemini-image-{时间戳}.{扩展名}`
 
-- **📚 图片历史记录**：
+- **图片历史记录**：
   - 自动收集所有生成的图片（最多保留 100 张）
-  - 2x2 网格预览布局
+  - 网格预览布局，支持按提示词搜索
   - 点击图片全屏查看 + 提示词详情
   - 支持单张下载或批量管理
-  - 数据持久化保存到浏览器本地
+  - 数据持久化保存到浏览器 IndexedDB
 
-### 💰 余额管理 (新增)
+### 📚 提示词库
+
+- **1000+ 精选提示词**：涵盖图片生成、编辑等多种场景
+- **分类筛选**：按类别快速浏览
+- **搜索功能**：支持标题、内容、作者搜索
+- **快捷调用**：输入框输入 `/t` 快速打开提示词选择器
+- **24 小时缓存**：本地缓存提示词，加速加载
+
+### 💰 余额管理
 
 - **API 余额查询**：
   - 实时显示 API Key 余额信息
@@ -46,10 +55,13 @@
 
 ### 🎮 等待街机模式
 
-- **Waiting Arcade Mode**：
-  - 在模型进行长思维链思考时，自动激活"街机模式"
-  - **内置小游戏**：包含 **贪吃蛇 (Snake)**、**恐龙跑酷 (Dino)**、**2048** 和 **生命游戏 (Game of Life)**
-  - **自适应体验**：游戏根据当前的**主题（明/暗）**和**设备类型（桌面/移动）**自动切换，打发等待时间
+- **Waiting Arcade Mode**：在模型进行长思维链思考时，自动激活"街机模式"
+- **内置小游戏**：
+  - 🐍 **贪吃蛇 (Snake)** - 经典游戏，带音效反馈
+  - 🦖 **恐龙跑酷 (Dino)** - Chrome 离线游戏风格
+  - 🔢 **2048** - 数字滑块益智游戏
+  - 🧬 **生命游戏 (Game of Life)** - 康威生命游戏模拟
+- **自适应体验**：游戏根据主题（明/暗）和设备类型（桌面/移动）自动切换
 
 ### 🧠 思维链可视化
 
@@ -79,11 +91,11 @@
 
 ## 🛠️ 技术栈
 
-- **核心框架**: [React 19](https://react.dev/)
-- **构建工具**: [Vite 6](https://vitejs.dev/)
-- **语言**: [TypeScript](https://www.typescriptlang.org/)
+- **核心框架**: [React 19](https://react.dev/) (通过 Preact 兼容层)
+- **构建工具**: [Vite 7](https://vitejs.dev/) + [vite-plugin-pwa](https://vite-pwa-org.netlify.app/)
+- **语言**: [TypeScript 5.9](https://www.typescriptlang.org/)
 - **样式方案**: [Tailwind CSS 4](https://tailwindcss.com/)
-- **状态管理**: [Zustand](https://github.com/pmndrs/zustand)
+- **状态管理**: [Zustand](https://github.com/pmndrs/zustand) + IndexedDB (idb-keyval)
 - **AI SDK**: [Google GenAI SDK](https://www.npmjs.com/package/@google/genai)
 - **图标库**: [Lucide React](https://lucide.dev/)
 - **Markdown**: React Markdown + Remark GFM
@@ -171,16 +183,26 @@ http://localhost:3000/?endpoint=https://my-proxy.com&model=gemini-2.0-flash
 - 看到蓝色高亮边框后松开鼠标
 - 图片自动上传并显示预览
 
-### 4. 图片历史记录 ✨ (新增)
+### 4. 图片历史记录
 
-点击顶部导航栏的 **🖼️ 图片图标**（带蓝色脉冲徽章）打开历史记录面板：
+点击顶部导航栏的 **🖼️ 图片图标** 打开历史记录面板：
 
-- **查看历史**：2x2 网格显示所有生成的图片
+- **查看历史**：网格显示所有生成的图片
+- **搜索图片**：按提示词关键字搜索
 - **预览大图**：点击图片查看全屏预览 + 提示词详情
+- **键盘导航**：使用方向键切换图片，ESC 关闭
 - **下载图片**：悬停显示下载按钮，或在预览模式下一键下载
 - **清空历史**：点击顶部垃圾桶图标清空所有记录
 
-### 5. 查看 API 余额 ✨ (新增)
+### 5. 提示词库
+
+- **打开方式**：点击顶部导航栏的 **📖 图标**
+- **快捷调用**：在输入框输入 `/t` 触发快速选择器
+- **分类筛选**：选择类别过滤提示词
+- **搜索**：输入关键词搜索标题、内容、作者
+- **使用提示词**：点击卡片将提示词填入输入框
+
+### 6. 查看 API 余额
 
 打开设置面板（右上角 ⚙️ 图标），顶部显示余额卡片：
 
@@ -189,56 +211,75 @@ http://localhost:3000/?endpoint=https://my-proxy.com&model=gemini-2.0-flash
 - **剩余**：剩余可用额度
 - **刷新**：点击右上角刷新按钮更新数据
 
-> 注意：余额查询功能仅支持 OpenAI 兼容的 API Endpoint（如 `undyapi.com`）
+> 注意：余额查询功能仅支持 OpenAI 兼容的 API Endpoint
 
-### 6. 高级设置
+### 7. 高级设置
 
 点击右上角的设置图标（⚙️）打开设置面板，可以调整：
 
-- **主题外观**：切换深色/浅色模式
-- **图像生成设置**：调整分辨率和比例
+- **主题外观**：切换深色/浅色/跟随系统模式
+- **Pro 模式**：启用图片生成和高级功能
+- **图像生成设置**：调整分辨率（1K/2K/4K）和比例
 - **Google Search Grounding**：开启后允许模型通过 Google 搜索获取实时信息
 - **思维链开关**：显示/隐藏模型的思考过程
 - **流式响应**：逐 token 流式传输或一次性响应
+- **发送快捷键**：Enter 发送或 Ctrl/⌘+Enter 发送
+- **书签功能**：生成包含当前配置的分享链接
+- **PWA 安装**：可用时显示安装按钮
 - **数据管理**：清除对话历史或重置 API Key
 
 ## 📂 项目结构
 
 ```
+src/
 ├── components/               # UI 组件
-│   ├── games/                   # 街机模式小游戏 (Snake, Dino, 2048, Life)
-│   ├── ui/                      # 通用 UI 组件 (Toast, Dialog)
-│   ├── ApiKeyModal.tsx          # API Key 输入弹窗
-│   ├── ChatInterface.tsx        # 主聊天区域
-│   ├── InputArea.tsx            # 输入框与文件上传 (支持拖拽)
-│   ├── MessageBubble.tsx        # 消息气泡与 Markdown 渲染 (支持下载)
-│   ├── SettingsPanel.tsx        # 设置面板 (含余额显示)
-│   ├── ImageHistoryPanel.tsx    # 图片历史记录面板 ✨
-│   └── ThinkingIndicator.tsx    # 思维链指示器与游戏入口
-├── services/                 # 服务层
-│   ├── geminiService.ts         # Google GenAI SDK 集成
-│   └── balanceService.ts        # API 余额查询服务 ✨
-├── store/                    # 状态管理
-│   ├── useAppStore.ts           # 应用核心状态 (含图片历史)
-│   └── useUiStore.ts            # UI 交互状态
-├── utils/                    # 工具函数
-│   ├── messageUtils.ts          # 消息处理工具
-│   └── soundUtils.ts            # 音效处理工具
-├── types.ts                  # TypeScript 类型定义
-├── App.tsx                   # 根组件
-├── index.tsx                 # 入口文件
-└── CLAUDE.md                 # 项目开发文档 ✨
+│   ├── games/               # 街机模式小游戏
+│   │   ├── SnakeGame.tsx       # 贪吃蛇
+│   │   ├── DinoGame.tsx        # 恐龙跑酷
+│   │   ├── Puzzle2048.tsx      # 2048
+│   │   └── LifeGame.tsx        # 生命游戏
+│   ├── ui/                  # 通用 UI 组件
+│   │   ├── ToastContainer.tsx  # Toast 通知
+│   │   └── GlobalDialog.tsx    # 全局对话框
+│   ├── ApiKeyModal.tsx      # API Key 输入弹窗
+│   ├── ChatInterface.tsx    # 主聊天区域
+│   ├── InputArea.tsx        # 输入框与文件上传
+│   ├── MessageBubble.tsx    # 消息气泡与 Markdown 渲染
+│   ├── SettingsPanel.tsx    # 设置面板
+│   ├── ImageHistoryPanel.tsx    # 图片历史记录面板
+│   ├── PromptLibraryPanel.tsx   # 提示词库面板
+│   ├── PromptQuickPicker.tsx    # 快捷提示词选择器
+│   ├── ThinkingIndicator.tsx    # 思维链指示器与游戏入口
+│   └── ErrorBoundary.tsx    # 错误边界
+├── services/                # 服务层
+│   ├── geminiService.ts     # Google GenAI SDK 集成
+│   ├── balanceService.ts    # API 余额查询服务
+│   └── promptService.ts     # 提示词库服务
+├── store/                   # 状态管理
+│   ├── useAppStore.ts       # 应用核心状态 (持久化)
+│   └── useUiStore.ts        # UI 交互状态
+├── utils/                   # 工具函数
+│   ├── imageUtils.ts        # 图片处理 (缩略图、下载)
+│   ├── messageUtils.ts      # 消息处理工具
+│   ├── soundUtils.ts        # Web Audio 游戏音效
+│   └── lazyLoadUtils.ts     # 懒加载与代码分割
+├── types.ts                 # TypeScript 类型定义
+├── App.tsx                  # 根组件
+└── index.tsx                # 入口文件
 ```
 
-## 🎯 功能对比
+## 🎯 功能亮点
 
-| 功能 | 原版 | 当前版本 |
-|------|------|----------|
-| 图片上传 | ✅ 点击上传 | ✅ 点击 + 拖拽上传 |
-| 图片下载 | ❌ 需右键另存为 | ✅ 悬停一键下载 |
-| 图片历史 | ❌ 无 | ✅ 自动收集 + 预览 |
-| API 余额 | ❌ 无 | ✅ 实时查询显示 |
-| 项目文档 | ⚠️ 基础 README | ✅ README + CLAUDE.md |
+| 功能 | 说明 |
+|------|------|
+| 多模态输入 | 文本 + 最多 14 张图片 |
+| 图片上传 | 点击 + 拖拽 + 粘贴 |
+| 图片下载 | 悬停一键下载 |
+| 图片历史 | 自动收集 + 搜索 + 预览 |
+| 提示词库 | 1000+ 精选提示词 |
+| API 余额 | 实时查询显示 |
+| 等待小游戏 | 4 款经典游戏 |
+| PWA 支持 | 可安装为独立应用 |
 
 ## 📝 开发文档
 

@@ -17,6 +17,8 @@ export interface Part {
     mimeType: string;
     data: string;
   };
+  // 支持 URL 图片（用于兼容第三方 API 返回的图片链接）
+  imageUrl?: string;
   thought?: boolean;
   thoughtSignature?: string;
 }
