@@ -5,7 +5,7 @@ import { ChatInterface } from './components/ChatInterface';
 import { ToastContainer } from './components/ui/ToastContainer';
 import { GlobalDialog } from './components/ui/GlobalDialog';
 import { formatBalance } from './services/balanceService';
-import { Settings, Sun, Moon, Github, ImageIcon, DollarSign, Download, Sparkles } from 'lucide-react';
+import { Settings, Sun, Moon, Github, ImageIcon, DollarSign, Download, Sparkles, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { lazyWithRetry, preloadComponents } from './utils/lazyLoadUtils';
 
 // Lazy load components
@@ -14,6 +14,7 @@ const ApiKeySettingsModal = lazyWithRetry(() => import('./components/ApiKeySetti
 const SettingsPanel = lazyWithRetry(() => import('./components/SettingsPanel').then(module => ({ default: module.SettingsPanel })));
 const ImageHistoryPanel = lazyWithRetry(() => import('./components/ImageHistoryPanel').then(module => ({ default: module.ImageHistoryPanel })));
 const PromptLibraryPanel = lazyWithRetry(() => import('./components/PromptLibraryPanel').then(module => ({ default: module.PromptLibraryPanel })));
+const ConversationList = lazyWithRetry(() => import('./components/ConversationList').then(module => ({ default: module.ConversationList })));
 
 const App: React.FC = () => {
   const { apiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory, balance, fetchBalance, installPrompt, setInstallPrompt } = useAppStore();
@@ -61,6 +62,7 @@ const App: React.FC = () => {
       () => import('./components/SettingsPanel'),
       () => import('./components/ImageHistoryPanel'),
       () => import('./components/PromptLibraryPanel'),
+      () => import('./components/ConversationList'),
       // Also preload components used in ChatInterface
       () => import('./components/ThinkingIndicator'),
       () => import('./components/MessageBubble'),
@@ -73,6 +75,7 @@ const App: React.FC = () => {
   }, []);
   const [mounted, setMounted] = useState(false);
   const [isImageHistoryOpen, setIsImageHistoryOpen] = useState(false);
+  const [isConversationListOpen, setIsConversationListOpen] = useState(window.innerWidth > 768);
 
   useEffect(() => {
     setMounted(true);
@@ -125,6 +128,15 @@ const App: React.FC = () => {
 
         {apiKey && (
           <div className="flex items-center gap-1 sm:gap-2">
+            {/* Conversation List Toggle */}
+            <button
+              onClick={() => setIsConversationListOpen(!isConversationListOpen)}
+              className="rounded-lg p-2 text-gray-500 dark:text-gray-400 transition hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              title={isConversationListOpen ? '隐藏对话列表' : '显示对话列表'}
+            >
+              {isConversationListOpen ? <PanelLeftClose className="h-6 w-6" /> : <PanelLeft className="h-6 w-6" />}
+            </button>
+
             {/* Balance Display - Desktop only */}
             {balance && (
                 <div
@@ -202,6 +214,50 @@ const App: React.FC = () => {
 
       {/* Main Content */}
       <main className="flex-1 relative overflow-hidden flex flex-row">
+        {/* Conversation List Sidebar */}
+        {apiKey && (
+          <div
+            className={`
+              absolute inset-0 z-20 flex
+              transition-all duration-300 ease-in-out
+              ${isConversationListOpen
+                ? 'bg-black/50 backdrop-blur-sm pointer-events-auto'
+                : 'bg-transparent backdrop-blur-none pointer-events-none'
+              }
+
+              md:static md:z-auto md:bg-transparent md:backdrop-blur-none md:pointer-events-auto md:overflow-hidden
+              md:transition-[width,border-color]
+              ${isConversationListOpen
+                ? 'md:w-64 md:border-r md:border-gray-200 dark:md:border-gray-800'
+                : 'md:w-0 md:border-r-0 md:border-transparent'
+              }
+            `}
+            onClick={() => {
+              // Close on backdrop click (mobile only)
+              if (window.innerWidth < 768 && isConversationListOpen) {
+                setIsConversationListOpen(false);
+              }
+            }}
+          >
+            <div
+              className={`
+                w-64 h-full bg-white dark:bg-gray-950
+                shadow-2xl md:shadow-none
+                overflow-hidden border-r border-gray-200 dark:border-gray-800 md:border-none
+
+                transition-transform duration-300 ease-in-out
+                ${isConversationListOpen ? 'translate-x-0' : '-translate-x-full'}
+                md:translate-x-0
+              `}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <Suspense fallback={<div className="p-4 text-center text-gray-500">加载中...</div>}>
+                <ConversationList />
+              </Suspense>
+            </div>
+          </div>
+        )}
+
         {/* Chat Area */}
         <div className="flex-1 flex flex-col min-w-0">
           <ChatInterface />

@@ -37,6 +37,15 @@ export interface ChatMessage {
   thinkingDuration?: number;
 }
 
+// 对话记录
+export interface Conversation {
+  id: string;
+  title: string;
+  messages: ChatMessage[];
+  createdAt: number;
+  updatedAt: number;
+}
+
 export interface Attachment {
   file: File;
   preview: string; // Base64 for UI preview

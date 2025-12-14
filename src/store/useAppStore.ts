@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
 import { get as getVal, set as setVal, del as delVal } from 'idb-keyval';
 import { fetchBalance, BalanceInfo } from '../services/balanceService';
-import { AppSettings, ChatMessage, Part, ImageHistoryItem } from '../types';
+import { AppSettings, ChatMessage, Part, ImageHistoryItem, Conversation } from '../types';
 import { createThumbnail } from '../utils/imageUtils';
 
 // Custom IndexedDB storage
@@ -18,10 +18,25 @@ const storage: StateStorage = {
   },
 };
 
+// 生成对话标题（从第一条消息提取）
+const generateTitle = (messages: ChatMessage[]): string => {
+  const firstUserMessage = messages.find(m => m.role === 'user');
+  if (firstUserMessage) {
+    const textPart = firstUserMessage.parts.find(p => p.text);
+    if (textPart?.text) {
+      return textPart.text.slice(0, 30) + (textPart.text.length > 30 ? '...' : '');
+    }
+  }
+  return '新对话';
+};
+
 interface AppState {
   apiKey: string | null;
   settings: AppSettings;
-  messages: ChatMessage[]; // Single Source of Truth
+  // 对话管理
+  conversations: Conversation[];
+  currentConversationId: string | null;
+  messages: ChatMessage[]; // 当前对话的消息（派生自 conversations）
   imageHistory: ImageHistoryItem[]; // 图片历史记录
   isLoading: boolean;
   isSettingsOpen: boolean;
@@ -33,6 +48,11 @@ interface AppState {
   setApiKey: (key: string) => void;
   fetchBalance: () => Promise<void>;
   updateSettings: (newSettings: Partial<AppSettings>) => void;
+  // 对话管理方法
+  createConversation: () => string;
+  switchConversation: (id: string) => void;
+  deleteConversation: (id: string) => void;
+  renameConversation: (id: string, title: string) => void;
   addMessage: (message: ChatMessage) => void;
   updateLastMessage: (parts: Part[], isError?: boolean, thinkingDuration?: number) => void;
   addImageToHistory: (image: ImageHistoryItem) => Promise<void>;
@@ -64,6 +84,8 @@ export const useAppStore = create<AppState>()(
         isPro: true,
         sendWithModifier: false, // 默认 Enter 发送
       },
+      conversations: [],
+      currentConversationId: null,
       messages: [],
       imageHistory: [], // 初始化图片历史记录
       isLoading: false,
@@ -85,29 +107,138 @@ export const useAppStore = create<AppState>()(
           console.error('Failed to update balance:', error);
         }
       },
-      
-      updateSettings: (newSettings) => 
+
+      updateSettings: (newSettings) =>
         set((state) => ({ settings: { ...state.settings, ...newSettings } })),
 
-      addMessage: (message) => 
-        set((state) => ({ 
-          messages: [...state.messages, message],
-        })),
+      // 创建新对话
+      createConversation: () => {
+        const id = Date.now().toString();
+        const now = Date.now();
+        const newConversation: Conversation = {
+          id,
+          title: '新对话',
+          messages: [],
+          createdAt: now,
+          updatedAt: now,
+        };
+        set((state) => ({
+          conversations: [newConversation, ...state.conversations],
+          currentConversationId: id,
+          messages: [],
+        }));
+        return id;
+      },
+
+      // 切换对话
+      switchConversation: (id) => {
+        const { conversations } = get();
+        const conversation = conversations.find(c => c.id === id);
+        if (conversation) {
+          set({
+            currentConversationId: id,
+            messages: conversation.messages,
+          });
+        }
+      },
+
+      // 删除对话
+      deleteConversation: (id) => {
+        set((state) => {
+          const newConversations = state.conversations.filter(c => c.id !== id);
+          // 如果删除的是当前对话，切换到第一个对话或清空
+          if (state.currentConversationId === id) {
+            const nextConversation = newConversations[0];
+            return {
+              conversations: newConversations,
+              currentConversationId: nextConversation?.id || null,
+              messages: nextConversation?.messages || [],
+            };
+          }
+          return { conversations: newConversations };
+        });
+      },
+
+      // 重命名对话
+      renameConversation: (id, title) => {
+        set((state) => ({
+          conversations: state.conversations.map(c =>
+            c.id === id ? { ...c, title } : c
+          ),
+        }));
+      },
+
+      addMessage: (message) =>
+        set((state) => {
+          const newMessages = [...state.messages, message];
+
+          // 如果没有当前对话，创建一个
+          let conversationId = state.currentConversationId;
+          let conversations = state.conversations;
+
+          if (!conversationId) {
+            conversationId = Date.now().toString();
+            const now = Date.now();
+            const newConversation: Conversation = {
+              id: conversationId,
+              title: generateTitle(newMessages),
+              messages: newMessages,
+              createdAt: now,
+              updatedAt: now,
+            };
+            conversations = [newConversation, ...conversations];
+          } else {
+            // 更新现有对话
+            conversations = conversations.map(c => {
+              if (c.id === conversationId) {
+                const updatedConv = {
+                  ...c,
+                  messages: newMessages,
+                  updatedAt: Date.now(),
+                };
+                // 如果是第一条消息，更新标题
+                if (c.messages.length === 0) {
+                  updatedConv.title = generateTitle(newMessages);
+                }
+                return updatedConv;
+              }
+              return c;
+            });
+          }
+
+          return {
+            messages: newMessages,
+            conversations,
+            currentConversationId: conversationId,
+          };
+        }),
 
       updateLastMessage: (parts, isError = false, thinkingDuration) =>
         set((state) => {
-            const messages = [...state.messages];
+          const messages = [...state.messages];
 
-            if (messages.length > 0) {
-                messages[messages.length - 1] = {
-                    ...messages[messages.length - 1],
-                    parts: [...parts], // Create a copy to trigger re-renders
-                    isError: isError,
-                    ...(thinkingDuration !== undefined && { thinkingDuration })
-                };
+          if (messages.length > 0) {
+            messages[messages.length - 1] = {
+              ...messages[messages.length - 1],
+              parts: [...parts],
+              isError: isError,
+              ...(thinkingDuration !== undefined && { thinkingDuration })
+            };
+          }
+
+          // 同步更新到 conversations
+          const conversations = state.conversations.map(c => {
+            if (c.id === state.currentConversationId) {
+              return {
+                ...c,
+                messages,
+                updatedAt: Date.now(),
+              };
             }
+            return c;
+          });
 
-            return { messages };
+          return { messages, conversations };
         }),
 
       addImageToHistory: async (image) => {
@@ -237,12 +368,22 @@ export const useAppStore = create<AppState>()(
       },
 
       setLoading: (loading) => set({ isLoading: loading }),
-      
+
       setInputText: (text) => set({ inputText: text }),
-      
+
       toggleSettings: () => set((state) => ({ isSettingsOpen: !state.isSettingsOpen })),
 
-      clearHistory: () => set({ messages: [] }),
+      clearHistory: () =>
+        set((state) => {
+          // 清空当前对话的消息
+          const conversations = state.conversations.map(c => {
+            if (c.id === state.currentConversationId) {
+              return { ...c, messages: [], updatedAt: Date.now() };
+            }
+            return c;
+          });
+          return { messages: [], conversations };
+        }),
 
       removeApiKey: () => set({ apiKey: null }),
 
@@ -254,13 +395,31 @@ export const useAppStore = create<AppState>()(
           const newMessages = [...state.messages];
           newMessages.splice(index, 1);
 
-          return { messages: newMessages };
+          // 同步到 conversations
+          const conversations = state.conversations.map(c => {
+            if (c.id === state.currentConversationId) {
+              return { ...c, messages: newMessages, updatedAt: Date.now() };
+            }
+            return c;
+          });
+
+          return { messages: newMessages, conversations };
         }),
 
       sliceMessages: (index) =>
-        set((state) => ({
-          messages: state.messages.slice(0, index + 1),
-        })),
+        set((state) => {
+          const newMessages = state.messages.slice(0, index + 1);
+
+          // 同步到 conversations
+          const conversations = state.conversations.map(c => {
+            if (c.id === state.currentConversationId) {
+              return { ...c, messages: newMessages, updatedAt: Date.now() };
+            }
+            return c;
+          });
+
+          return { messages: newMessages, conversations };
+        }),
     }),
     {
       name: 'gemini-pro-storage',
@@ -268,8 +427,21 @@ export const useAppStore = create<AppState>()(
       partialize: (state) => ({
         apiKey: state.apiKey,
         settings: state.settings,
+        conversations: state.conversations, // 持久化对话记录
+        currentConversationId: state.currentConversationId,
         imageHistory: state.imageHistory, // 持久化图片历史记录
       }),
+      onRehydrateStorage: () => (state) => {
+        // 恢复时加载当前对话的消息
+        if (state && state.currentConversationId) {
+          const conversation = state.conversations.find(
+            c => c.id === state.currentConversationId
+          );
+          if (conversation) {
+            state.messages = conversation.messages;
+          }
+        }
+      },
     }
   )
 );
