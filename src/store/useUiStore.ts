@@ -21,6 +21,7 @@ interface UiState {
   toasts: Toast[];
   dialog: DialogOptions | null;
   isPromptLibraryOpen: boolean;
+  isApiKeySettingsOpen: boolean;
 
   addToast: (message: string, type?: ToastType) => void;
   removeToast: (id: string) => void;
@@ -28,12 +29,15 @@ interface UiState {
   closeDialog: () => void;
   togglePromptLibrary: () => void;
   closePromptLibrary: () => void;
+  openApiKeySettings: () => void;
+  closeApiKeySettings: () => void;
 }
 
 export const useUiStore = create<UiState>((set) => ({
   toasts: [],
   dialog: null,
   isPromptLibraryOpen: false,
+  isApiKeySettingsOpen: false,
 
   addToast: (message, type = 'info') => {
     const id = Date.now().toString();
@@ -62,4 +66,8 @@ export const useUiStore = create<UiState>((set) => ({
     set((state) => ({ isPromptLibraryOpen: !state.isPromptLibraryOpen })),
 
   closePromptLibrary: () => set({ isPromptLibraryOpen: false }),
+
+  openApiKeySettings: () => set({ isApiKeySettingsOpen: true }),
+
+  closeApiKeySettings: () => set({ isApiKeySettingsOpen: false }),
 }));

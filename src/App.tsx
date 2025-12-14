@@ -10,13 +10,14 @@ import { lazyWithRetry, preloadComponents } from './utils/lazyLoadUtils';
 
 // Lazy load components
 const ApiKeyModal = lazyWithRetry(() => import('./components/ApiKeyModal').then(module => ({ default: module.ApiKeyModal })));
+const ApiKeySettingsModal = lazyWithRetry(() => import('./components/ApiKeySettingsModal').then(module => ({ default: module.ApiKeySettingsModal })));
 const SettingsPanel = lazyWithRetry(() => import('./components/SettingsPanel').then(module => ({ default: module.SettingsPanel })));
 const ImageHistoryPanel = lazyWithRetry(() => import('./components/ImageHistoryPanel').then(module => ({ default: module.ImageHistoryPanel })));
 const PromptLibraryPanel = lazyWithRetry(() => import('./components/PromptLibraryPanel').then(module => ({ default: module.PromptLibraryPanel })));
 
 const App: React.FC = () => {
-  const { apiKey, setApiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory, balance, fetchBalance, installPrompt, setInstallPrompt } = useAppStore();
-  const { togglePromptLibrary, isPromptLibraryOpen, showDialog, addToast } = useUiStore();
+  const { apiKey, settings, updateSettings, isSettingsOpen, toggleSettings, imageHistory, balance, fetchBalance, installPrompt, setInstallPrompt } = useAppStore();
+  const { togglePromptLibrary, isPromptLibraryOpen } = useUiStore();
 
   useEffect(() => {
     const handleBeforeInstallPrompt = (e: Event) => {
@@ -56,6 +57,7 @@ const App: React.FC = () => {
   useEffect(() => {
     preloadComponents([
       () => import('./components/ApiKeyModal'),
+      () => import('./components/ApiKeySettingsModal'),
       () => import('./components/SettingsPanel'),
       () => import('./components/ImageHistoryPanel'),
       () => import('./components/PromptLibraryPanel'),
@@ -74,55 +76,6 @@ const App: React.FC = () => {
 
   useEffect(() => {
     setMounted(true);
-
-    const params = new URLSearchParams(window.location.search);
-    const urlApiKey = params.get('apikey');
-    const urlEndpoint = params.get('endpoint');
-    const urlModel = params.get('model');
-
-    // Check if parameters are actually different from current settings
-    const isDifferent =
-        (urlApiKey && urlApiKey !== apiKey) ||
-        (urlEndpoint && urlEndpoint !== settings.customEndpoint) ||
-        (urlModel && urlModel !== settings.modelName);
-
-    if ((urlApiKey || urlEndpoint || urlModel) && isDifferent) {
-        let message = "检测到 URL 中包含新的配置参数：\n\n";
-        if (urlApiKey && urlApiKey !== apiKey) message += `- API Key: (已隐藏)\n`;
-        if (urlEndpoint && urlEndpoint !== settings.customEndpoint) message += `- 接口地址: ${urlEndpoint}\n`;
-        if (urlModel && urlModel !== settings.modelName) message += `- 模型: ${urlModel}\n`;
-
-        message += "\n是否应用这些设置？这将覆盖您当前的配置。";
-
-        showDialog({
-            type: 'confirm',
-            title: '应用外部配置',
-            message: message,
-            confirmLabel: '应用并保存',
-            onConfirm: () => {
-                if (urlEndpoint || urlModel) {
-                    updateSettings({
-                        ...(urlEndpoint ? { customEndpoint: urlEndpoint } : {}),
-                        ...(urlModel ? { modelName: urlModel } : {}),
-                    });
-                }
-
-                if (urlApiKey) {
-                    setApiKey(urlApiKey);
-                }
-
-                // Clean up URL
-                const newUrl = window.location.pathname;
-                window.history.replaceState({}, '', newUrl);
-
-                addToast('配置已更新', 'success');
-            }
-        });
-    } else if (urlApiKey || urlEndpoint || urlModel) {
-        // If parameters exist but are same as current, just clean up URL silently
-        const newUrl = window.location.pathname;
-        window.history.replaceState({}, '', newUrl);
-    }
   }, []);
 
   // Theme handling
@@ -302,6 +255,7 @@ const App: React.FC = () => {
       {/* Modals */}
       <Suspense fallback={null}>
         {!apiKey && <ApiKeyModal />}
+        <ApiKeySettingsModal />
         {isImageHistoryOpen && (
           <ImageHistoryPanel isOpen={isImageHistoryOpen} onClose={() => setIsImageHistoryOpen(false)} />
         )}

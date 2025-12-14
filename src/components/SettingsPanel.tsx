@@ -1,12 +1,12 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppStore } from '../store/useAppStore';
 import { useUiStore } from '../store/useUiStore';
-import { X, LogOut, Trash2, Share2, Bookmark, DollarSign, RefreshCw, Download, Zap } from 'lucide-react';
+import { X, Trash2, DollarSign, RefreshCw, Download, Zap, Settings2 } from 'lucide-react';
 import { formatBalance } from '../services/balanceService';
 
 export const SettingsPanel: React.FC = () => {
-  const { apiKey, settings, updateSettings, toggleSettings, removeApiKey, clearHistory, isSettingsOpen, fetchBalance, balance, installPrompt, setInstallPrompt } = useAppStore();
-  const { addToast, showDialog } = useUiStore();
+  const { apiKey, settings, updateSettings, toggleSettings, clearHistory, isSettingsOpen, fetchBalance, balance, installPrompt, setInstallPrompt } = useAppStore();
+  const { addToast, showDialog, openApiKeySettings } = useUiStore();
   const [loadingBalance, setLoadingBalance] = useState(false);
   
   const handleInstallClick = async () => {
@@ -51,36 +51,6 @@ export const SettingsPanel: React.FC = () => {
     } finally {
       setLoadingBalance(false);
     }
-  };
-
-  const getBookmarkUrl = () => {
-    if (!apiKey) return window.location.href;
-    const params = new URLSearchParams();
-    params.set('apikey', apiKey);
-    if (settings.customEndpoint) params.set('endpoint', settings.customEndpoint);
-    if (settings.modelName) params.set('model', settings.modelName);
-    return `${window.location.origin}${window.location.pathname}?${params.toString()}`;
-  };
-
-  const handleCreateBookmark = () => {
-    if (!apiKey) return;
-    const url = getBookmarkUrl();
-    
-    // Update address bar without reloading
-    window.history.pushState({ path: url }, '', url);
-
-    // Copy to clipboard
-    navigator.clipboard.writeText(url).then(() => {
-        addToast("URL 已更新并复制！按 Ctrl+D 添加书签。", 'success');
-    }).catch(err => {
-        console.error("复制失败", err);
-        showDialog({
-            type: 'alert',
-            title: '复制失败',
-            message: `请手动复制此 URL：\n${url}`,
-            onConfirm: () => {}
-        });
-    });
   };
 
   return (
@@ -341,29 +311,6 @@ export const SettingsPanel: React.FC = () => {
           </section>
         )}
 
-        {/* Share Configuration */}
-        <section className="pt-4 border-t border-gray-200 dark:border-gray-800 mb-4">
-           <div className="flex gap-2 mb-2">
-             <button
-               onClick={handleCreateBookmark}
-               className="flex-1 flex items-center justify-center gap-2 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 p-3 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition"
-             >
-               <Share2 className="h-4 w-4" />
-               <span className="text-xs sm:text-sm">更新 URL</span>
-             </button>
-
-             <a
-               href={getBookmarkUrl()}
-               onClick={(e) => e.preventDefault()} // Prevent navigation, strictly for dragging
-               className="flex-1 flex items-center justify-center gap-2 rounded-lg border-2 border-dashed border-gray-300 dark:border-gray-700 p-3 text-gray-500 dark:text-gray-400 hover:border-blue-400 dark:hover:border-blue-500 hover:text-blue-500 dark:hover:text-blue-400 cursor-grab active:cursor-grabbing transition text-sm font-medium"
-               title="将此按钮拖动到书签栏"
-             >
-               <Bookmark className="h-4 w-4" />
-               <span className="text-xs sm:text-sm">拖动到书签</span>
-             </a>
-           </div>
-        </section>
-
         {/* Data Management */}
         <section className="pt-4 border-t border-gray-200 dark:border-gray-800">
             <button
@@ -387,22 +334,11 @@ export const SettingsPanel: React.FC = () => {
             </button>
 
             <button
-                onClick={() => {
-                    showDialog({
-                        type: 'confirm',
-                        title: '移除 API Key',
-                        message: "您确定要移除您的 API Key 吗？您的聊天记录将被保留。",
-                        confirmLabel: "移除",
-                        onConfirm: () => {
-                            removeApiKey();
-                            addToast("API Key 已移除", 'info');
-                        }
-                    });
-                }}
-                className="w-full flex items-center justify-center gap-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-gray-100 dark:bg-gray-800 p-3 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+                onClick={openApiKeySettings}
+                className="w-full flex items-center justify-center gap-2 rounded-lg border border-blue-200 dark:border-blue-500/30 bg-blue-50 dark:bg-blue-500/10 p-3 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-500/20 transition"
             >
-                <LogOut className="h-4 w-4" />
-                <span>清除 API Key</span>
+                <Settings2 className="h-4 w-4" />
+                <span>修改 API 配置</span>
             </button>
         </section>
 
